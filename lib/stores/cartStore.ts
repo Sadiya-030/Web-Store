@@ -67,9 +67,7 @@ export const useCartStore = create<CartStore>()(
 
             // If config provided, only remove matching configuration
             return !(
-              (config.metal === undefined || i.metal === config.metal) &&
               (config.purity === undefined || i.purity === config.purity) &&
-              (config.carat === undefined || i.carat === config.carat) &&
               (config.size === undefined || i.size === config.size)
             );
           }),
