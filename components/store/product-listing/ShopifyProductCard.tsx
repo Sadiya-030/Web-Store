@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { useCartStore } from "@/lib/stores/cartStore";
 import { parseShippingInfo } from "@/lib/utils/deliveryDate";
+import { ProductUnavailableDialog } from "./ProductUnavailableDialog";
 import type { ShopifyProduct } from "@/lib/types";
 
 interface ShopifyProductCardProps {
@@ -37,6 +38,7 @@ export function ShopifyProductCard({
   const [selectedColorValue, setSelectedColorValue] = useState<string | null>(
     null,
   );
+  const [showUnavailableDialog, setShowUnavailableDialog] = useState(false);
 
   // Extract delivery days from product metafields
   const deliveryDays = useMemo(() => {
@@ -107,6 +109,12 @@ export function ShopifyProductCard({
     e.stopPropagation();
 
     if (!selectedVariant || !selectedColorValue) return;
+
+    // Check if variant is available for sale
+    if (!selectedVariant.availableForSale) {
+      setShowUnavailableDialog(true);
+      return;
+    }
 
     addToCart({
       productId: product.id,
@@ -239,6 +247,12 @@ export function ShopifyProductCard({
           </div>
         </div>
       </Link>
+
+      <ProductUnavailableDialog
+        open={showUnavailableDialog}
+        onOpenChange={setShowUnavailableDialog}
+        productTitle={product.title}
+      />
     </motion.div>
   );
 }

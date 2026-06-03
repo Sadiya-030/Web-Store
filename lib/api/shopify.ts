@@ -124,6 +124,7 @@ export async function getAllProducts(): Promise<ShopifyProduct[]> {
                   id
                   price
                   title
+                  availableForSale
                   selectedOptions {
                     name
                     value
@@ -145,35 +146,41 @@ export async function getAllProducts(): Promise<ShopifyProduct[]> {
   try {
     const response = await shopifyFetch<any>(query);
 
-    const products = response.data.products.edges.map((edge: any) => {
-      const product = edge.node;
-      return {
-        id: product.id,
-        title: product.title,
-        handle: product.handle,
-        vendor: product.vendor,
-        productType: product.productType,
-        images:
-          product.images?.edges?.map((img: any) => ({
-            url: img.node.url,
-            alt: img.node.altText,
-          })) || [],
-        variants:
-          product.variants?.edges?.map((variant: any) => ({
-            id: variant.node.id,
-            price: variant.node.price,
-            title: variant.node.title,
-            image: variant.node.image,
-            selectedOptions:
-              variant.node.selectedOptions?.map((opt: any) => ({
-                name: opt.name,
-                value: opt.value,
-              })) || [],
-          })) || [],
-        tags: product.tags || [],
-        description: product.description,
-      } as ShopifyProduct;
-    });
+    const products = response.data.products.edges
+      .filter((edge: any) => {
+        const title = edge.node.title?.toLowerCase() || "";
+        return !title.includes("customise your own");
+      })
+      .map((edge: any) => {
+        const product = edge.node;
+        return {
+          id: product.id,
+          title: product.title,
+          handle: product.handle,
+          vendor: product.vendor,
+          productType: product.productType,
+          images:
+            product.images?.edges?.map((img: any) => ({
+              url: img.node.url,
+              alt: img.node.altText,
+            })) || [],
+          variants:
+            product.variants?.edges?.map((variant: any) => ({
+              id: variant.node.id,
+              price: variant.node.price,
+              title: variant.node.title,
+              availableForSale: variant.node.availableForSale,
+              image: variant.node.image,
+              selectedOptions:
+                variant.node.selectedOptions?.map((opt: any) => ({
+                  name: opt.name,
+                  value: opt.value,
+                })) || [],
+            })) || [],
+          tags: product.tags || [],
+          description: product.description,
+        } as ShopifyProduct;
+      });
 
     return products;
   } catch (error) {
