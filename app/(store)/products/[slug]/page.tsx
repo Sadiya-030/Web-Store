@@ -2,8 +2,9 @@ import { getProductByHandle, getAllProducts } from "@/lib/api/shopify";
 import { ProductPageClient } from "./ProductPageClient";
 import { ProductSpecificationVideo } from "@/components/store/product-details/ProductSpecificationVideo";
 import { ProductAboutSection } from "@/components/store/product-details/ProductAboutSection";
-import { CertificationsSection } from "@/components/store/product-details/CertificationsSection";
 import { RelatedProducts } from "@/components/store/product-details/RelatedProducts";
+import { TrustAndPromise } from "@/components/store/product-details/TrustAndPromise";
+import { ExpertConsultation } from "@/components/store/product-details/ExpertConsultation";
 import { notFound } from "next/navigation";
 import { logger } from "@/lib/utils/logger";
 import type { Metadata } from "next";
@@ -90,37 +91,51 @@ export default async function ProductPage({
       <ProductPageClient shopifyProduct={product} />
 
       {/* Video and Details Section - Side by Side */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-15 items-start">
-          {/* Left: Video */}
-          <div className="lg:col-span-2">
-            <ProductSpecificationVideo
-              metafields={product.metafields}
-              featuredImageUrl={product.featuredImage?.url}
-            />
-          </div>
+      <div className="w-full px-4 md:px-6 lg:px-8 py-6 md:py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[62.5%_37.5%] gap-10 md:gap-14 items-start">
+            {/* Left: Video */}
+            <div>
+              <div className="overflow-hidden">
+                <ProductSpecificationVideo
+                  metafields={product.metafields}
+                  featuredImageUrl={product.featuredImage?.url}
+                />
+              </div>
+            </div>
 
-          {/* Right: About This Product */}
-          <div className="lg:col-span-1 lg:top-20">
-            <ProductAboutSection
-              metafields={product.metafields}
-              description={product.description}
-              descriptionHtml={product.descriptionHtml}
-            />
+            {/* Right: About This Product */}
+            <div>
+              <ProductAboutSection
+                metafields={product.metafields}
+                description={product.description}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Certifications & Care Section */}
-      <CertificationsSection metafields={product.metafields} />
+      {/* Trust and Promise Section */}
+      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-6">
+        <div className="max-w-7xl mx-auto">
+          <TrustAndPromise />
+        </div>
+      </div>
+
+      {/* Expert Consultation Section */}
+      <div className="w-full py-4 md:py-6">
+        <ExpertConsultation />
+      </div>
 
       {/* Related Products from Metafield */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12">
-        <RelatedProducts
-          metafields={product.metafields}
-          allProducts={allProducts}
-          currentProduct={product}
-        />
+      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-6">
+        <div className="max-w-7xl mx-auto">
+          <RelatedProducts
+            metafields={product.metafields}
+            allProducts={allProducts}
+            currentProduct={product}
+          />
+        </div>
       </div>
     </>
   );

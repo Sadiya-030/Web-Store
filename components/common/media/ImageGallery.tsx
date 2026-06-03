@@ -98,8 +98,13 @@ export function ImageGallery({
   // Prepare display images - featured image first if provided
   const displayImages = useMemo(() => {
     if (featuredImage) {
-      const featured = { url: featuredImage.url, alt: featuredImage.alt || altTextBase };
-      const others = normalizedImages.filter((img) => img.url !== featuredImage.url);
+      const featured = {
+        url: featuredImage.url,
+        alt: featuredImage.alt || altTextBase,
+      };
+      const others = normalizedImages.filter(
+        (img) => img.url !== featuredImage.url,
+      );
       return [featured, ...others];
     }
     return normalizedImages;
@@ -109,16 +114,19 @@ export function ImageGallery({
     setMainImageIndex(index);
   };
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!enableZoom || !mainImageRef.current) return;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!enableZoom || !mainImageRef.current) return;
 
-    const rect = mainImageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+      const rect = mainImageRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    setZoomPos({ x, y });
-    setShowZoom(true);
-  }, [enableZoom]);
+      setZoomPos({ x, y });
+      setShowZoom(true);
+    },
+    [enableZoom],
+  );
 
   const handleMouseLeave = () => {
     setShowZoom(false);
@@ -156,19 +164,24 @@ export function ImageGallery({
   }
 
   const thumbnails = showThumbnails ? (
-    <div className={`w-25 shrink-0 ${thumbnailPosition === "left" ? "" : "hidden"}`}>
+    <div
+      className={`w-25 shrink-0 ${thumbnailPosition === "left" ? "" : "hidden"}`}
+    >
       <div className="flex h-195 flex-col items-center gap-3 overflow-y-auto pr-1 pt-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         {displayImages.map(
           (img, idx) =>
             img && (
               <Button
                 key={idx}
+                type="button"
                 onClick={() => handleThumbnailClick(idx)}
-                className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-md transition-all ${
-                  mainImageIndex === idx
-                    ? "ring-2 ring-gray-900"
-                    : "ring-1 ring-evol-grey hover:ring-gray-400"
-                }`}
+                className="
+                  relative shrink-0 w-20 h-20 overflow-hidden rounded-md
+                  border-0 shadow-none outline-none
+                  ring-0 focus:ring-0 focus:outline-none
+                  focus-visible:ring-0 focus-visible:outline-none
+                  data-[state=active]:ring-0
+                "
               >
                 <Image
                   src={img.url}
@@ -190,7 +203,9 @@ export function ImageGallery({
   return (
     <div className={`w-full ${className}`}>
       {/* Desktop Layout */}
-      <div className={`hidden lg:flex gap-4 ${thumbnailPosition === "bottom" ? "flex-col" : ""}`}>
+      <div
+        className={`hidden lg:flex gap-4 ${thumbnailPosition === "bottom" ? "flex-col" : ""}`}
+      >
         {thumbnailPosition === "left" && thumbnails}
 
         {/* Main image */}
@@ -261,12 +276,15 @@ export function ImageGallery({
               img ? (
                 <Button
                   key={idx}
+                  type="button"
                   onClick={() => handleThumbnailClick(idx)}
-                  className={`relative shrink-0 w-20 h-20 rounded transition-all ${
-                    mainImageIndex === idx
-                      ? "ring-2 ring-gray-900"
-                      : "ring-1 ring-evol-grey"
-                  }`}
+                  className="
+                    relative shrink-0 w-20 h-20 overflow-hidden rounded-md
+                    border-0 shadow-none outline-none
+                    ring-0 focus:ring-0 focus:outline-none
+                    focus-visible:ring-0 focus-visible:outline-none
+                    data-[state=active]:ring-0
+                  "
                 >
                   <Image
                     src={img.url}
@@ -321,12 +339,15 @@ export function ImageGallery({
               img ? (
                 <Button
                   key={idx}
+                  type="button"
                   onClick={() => handleThumbnailClick(idx)}
-                  className={`relative shrink-0 w-16 h-16 rounded transition-all ${
-                    mainImageIndex === idx
-                      ? "ring-2 ring-gray-900"
-                      : "ring-1 ring-evol-grey"
-                  }`}
+                  className="
+                    relative shrink-0 w-20 h-20 overflow-hidden rounded-md
+                    border-0 shadow-none outline-none
+                    ring-0 focus:ring-0 focus:outline-none
+                    focus-visible:ring-0 focus-visible:outline-none
+                    data-[state=active]:ring-0
+                  "
                 >
                   <Image
                     src={img.url}

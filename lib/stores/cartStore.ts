@@ -1,14 +1,16 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface CartItem {
   productId: string;
   name: string;
   image: string;
   price: number;
+  color: string;
   purity?: string;
-  size: number;
+  size?: number;
   quantity: number;
+  deliveryDays?: number;
 }
 
 interface CartStore {
@@ -16,7 +18,11 @@ interface CartStore {
   isOpen: boolean;
   add: (item: CartItem) => void;
   remove: (productId: string, config?: Partial<CartItem>) => void;
-  updateQty: (productId: string, qty: number, config?: Partial<CartItem>) => void;
+  updateQty: (
+    productId: string,
+    qty: number,
+    config?: Partial<CartItem>,
+  ) => void;
   clear: () => void;
   isInCart: (productId: string) => boolean;
   total: () => number;
@@ -27,6 +33,7 @@ interface CartStore {
 const itemsMatch = (item1: CartItem, item2: CartItem): boolean => {
   return (
     item1.productId === item2.productId &&
+    item1.color === item2.color &&
     item1.purity === item2.purity &&
     item1.size === item2.size
   );
@@ -48,7 +55,7 @@ export const useCartStore = create<CartStore>()(
               items: state.items.map((i) =>
                 itemsMatch(i, item)
                   ? { ...i, quantity: i.quantity + item.quantity }
-                  : i
+                  : i,
               ),
             };
           }
@@ -63,20 +70,22 @@ export const useCartStore = create<CartStore>()(
         set((state) => ({
           items: state.items.filter((i) => {
             if (i.productId !== productId) return true;
-            if (!config) return false; // If no config provided, remove all with this productId
+            if (!config) return false;
 
-            // If config provided, only remove matching configuration
             return !(
-              (config.metal === undefined || i.metal === config.metal) &&
+              (config.color === undefined || i.color === config.color) &&
               (config.purity === undefined || i.purity === config.purity) &&
-              (config.carat === undefined || i.carat === config.carat) &&
               (config.size === undefined || i.size === config.size)
             );
           }),
         }));
       },
 
-      updateQty: (productId: string, qty: number, config?: Partial<CartItem>) => {
+      updateQty: (
+        productId: string,
+        qty: number,
+        config?: Partial<CartItem>,
+      ) => {
         if (qty <= 0) {
           get().remove(productId, config);
           return;
@@ -84,7 +93,8 @@ export const useCartStore = create<CartStore>()(
         set((state) => ({
           items: state.items.map((i) => {
             if (i.productId !== productId) return i;
-            if (config && !itemsMatch(i, { ...i, ...config } as CartItem)) return i;
+            if (config && !itemsMatch(i, { ...i, ...config } as CartItem))
+              return i;
             return { ...i, quantity: qty };
           }),
         }));
@@ -99,7 +109,10 @@ export const useCartStore = create<CartStore>()(
       },
 
       total: () => {
-        return get().items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        return get().items.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
       },
 
       setOpen: (open: boolean) => {
@@ -107,10 +120,10 @@ export const useCartStore = create<CartStore>()(
       },
     }),
     {
-      name: 'cart-store',
+      name: "cart-store",
       partialize: (state) => ({
         items: state.items,
       }),
-    }
-  )
+    },
+  ),
 );
