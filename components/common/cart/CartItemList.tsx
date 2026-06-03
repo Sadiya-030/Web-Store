@@ -32,6 +32,17 @@ export function CartItemList({
 
   const getConfiguration = (item: CartItem) => {
     if ("configuration" in item) return item.configuration;
+
+    // For cart store items, build configuration from purity and size
+    if ("purity" in item || "size" in item) {
+      const parts = [];
+      if ("purity" in item && item.purity) parts.push(item.purity);
+      if ("size" in item && item.size && item.size > 0) {
+        parts.push(`Size ${item.size}`);
+      }
+      return parts.join(" · ");
+    }
+
     return "";
   };
 

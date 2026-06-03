@@ -113,10 +113,9 @@ export function ShopifyProductCard({
     // Only require selectedColorValue if product has color options
     if (hasColorOptions && !selectedColorValue) return;
 
-    let variantToAdd = selectedVariant;
+    let variantToAdd: (typeof selectedVariant) | null = null;
 
     if (hasColorOptions && selectedColorValue) {
-      // For color products, find first available variant with the selected color
       const variantsWithSelectedColor = product.variants.filter((v) => {
         const colorOption = v.selectedOptions?.find(
           (opt) =>
@@ -141,17 +140,22 @@ export function ShopifyProductCard({
 
       variantToAdd = availableVariant;
     } else if (!hasColorOptions && product.variants.length > 0) {
-      // For products without color options, find first available variant
+      // For products without color options (like gold beans), find first available variant
       const availableVariant = product.variants.find((v) => v.availableForSale);
       if (!availableVariant) {
+        // No variants available for any size/weight configuration
         setShowUnavailableDialog(true);
         return;
       }
       variantToAdd = availableVariant;
+    } else {
+      // No variant configuration found
+      setShowUnavailableDialog(true);
+      return;
     }
 
-    // Final safety check - variant should be available
-    if (!variantToAdd?.availableForSale) {
+    // Final safety check - variant must be valid and available
+    if (!variantToAdd || !variantToAdd.availableForSale) {
       setShowUnavailableDialog(true);
       return;
     }
@@ -159,8 +163,8 @@ export function ShopifyProductCard({
     addToCart({
       productId: product.id,
       name: product.title,
-      image: imageUrl || "",
-      price,
+      image: variantToAdd.image?.url || imageUrl || "",
+      price: parseInt(variantToAdd.price || "0"),
       color: selectedColorValue || "Standard",
       quantity: 1,
       deliveryDays,
