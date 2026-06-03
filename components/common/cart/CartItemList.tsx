@@ -71,7 +71,7 @@ export function CartItemList({
         }
       `}</style>
 
-      {items.map((item) => (
+      {items.map((item, idx) => (
         <div
           key={getKey(item)}
           className="flex gap-2 pb-2 border-b border-evol-grey"
@@ -82,6 +82,8 @@ export function CartItemList({
               src={getImage(item)}
               alt={getName(item)}
               fill
+              sizes="128px"
+              priority={idx === 0}
               className="object-cover"
             />
           </div>
