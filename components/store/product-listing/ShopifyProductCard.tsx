@@ -110,22 +110,44 @@ export function ShopifyProductCard({
     e.preventDefault();
     e.stopPropagation();
 
-    // Only require selectedColorValue if product has color options
-    if (hasColorOptions && !selectedColorValue) return;
+    console.log("\n=== SHOPIFY PRODUCT CARD - ADD TO CART DEBUG ===");
+    console.log("Product:", product.title);
+    console.log("Product ID:", product.id);
+    console.log("Has Color Options:", hasColorOptions);
+    console.log("Selected Color Value:", selectedColorValue);
+    console.log("Total Variants:", product.variants.length);
+    console.log("Product Variants:", product.variants.map(v => ({
+      id: v.id,
+      price: v.price,
+      availableForSale: v.availableForSale,
+      selectedOptions: v.selectedOptions,
+    })));
 
-    let variantToAdd: (typeof selectedVariant) | null = null;
+    // Only require selectedColorValue if product has color options
+    if (hasColorOptions && !selectedColorValue) {
+      console.log("❌ BLOCKED: Has color options but no color selected");
+      return;
+    }
+
+    let variantToAdd: typeof selectedVariant | null = null;
 
     if (hasColorOptions && selectedColorValue) {
+      console.log(`\n--- Looking for variants with color: ${selectedColorValue} ---`);
       const variantsWithSelectedColor = product.variants.filter((v) => {
         const colorOption = v.selectedOptions?.find(
           (opt) =>
             opt.name.toLowerCase() === "color" ||
             opt.name.toLowerCase() === "metal color",
         );
-        return colorOption?.value === selectedColorValue;
+        const matches = colorOption?.value === selectedColorValue;
+        console.log(`  Variant ${v.id}: color="${colorOption?.value}" matches=${matches} available=${v.availableForSale}`);
+        return matches;
       });
 
+      console.log(`Found ${variantsWithSelectedColor.length} variants with selected color`);
+
       if (variantsWithSelectedColor.length === 0) {
+        console.log("❌ BLOCKED: No variants found for selected color");
         setShowUnavailableDialog(true);
         return;
       }
@@ -133,34 +155,82 @@ export function ShopifyProductCard({
       const availableVariant = variantsWithSelectedColor.find(
         (v) => v.availableForSale,
       );
+      console.log(`Looking for available variant among ${variantsWithSelectedColor.length}`, {
+        found: !!availableVariant,
+        availableForSale: availableVariant?.availableForSale,
+      });
+
       if (!availableVariant) {
+        console.log("❌ BLOCKED: No available variant found for selected color");
         setShowUnavailableDialog(true);
         return;
       }
 
       variantToAdd = availableVariant;
     } else if (!hasColorOptions && product.variants.length > 0) {
+      console.log(`\n--- No color options, checking for available variants (${product.variants.length} total) ---`);
       // For products without color options (like gold beans), find first available variant
+      product.variants.forEach((v) => {
+        console.log(`  Variant ${v.id}: available=${v.availableForSale} selectedOptions=${JSON.stringify(v.selectedOptions)}`);
+      });
+
       const availableVariant = product.variants.find((v) => v.availableForSale);
+      console.log(`Found available variant: ${!!availableVariant}`, availableVariant?.id);
+
       if (!availableVariant) {
         // No variants available for any size/weight configuration
+        console.log("❌ BLOCKED: No available variants at all");
         setShowUnavailableDialog(true);
         return;
       }
       variantToAdd = availableVariant;
     } else {
       // No variant configuration found
+      console.log("❌ BLOCKED: No variant configuration found - no colors and no variants");
       setShowUnavailableDialog(true);
       return;
     }
 
     // Final safety check - variant must be valid and available
     if (!variantToAdd || !variantToAdd.availableForSale) {
+      console.log("❌ BLOCKED: Final safety check failed", {
+        variantExists: !!variantToAdd,
+        availableForSale: variantToAdd?.availableForSale,
+      });
       setShowUnavailableDialog(true);
       return;
     }
 
-    addToCart({
+    console.log("✅ PASSED: Variant is valid and available, proceeding with add to cart");
+
+    // Extract size and purity from variant's selected options
+    let sizeValue: number | undefined;
+    let purityValue: string | undefined;
+
+    if (variantToAdd.selectedOptions) {
+      // Extract size (for rings and gold beans - weight in grams)
+      const sizeOption = variantToAdd.selectedOptions.find(
+        (opt) => opt.name.toLowerCase() === "size",
+      );
+      if (sizeOption?.value) {
+        const parsed = parseFloat(sizeOption.value);
+        if (!isNaN(parsed)) {
+          sizeValue = parsed;
+        }
+      }
+
+      // Extract purity (14KT, 18KT, etc.)
+      const purityOption = variantToAdd.selectedOptions.find(
+        (opt) =>
+          opt.name.toLowerCase() === "purity" ||
+          opt.name.toLowerCase() === "gold purity",
+      );
+      if (purityOption?.value) {
+        purityValue = purityOption.value;
+      }
+    }
+
+    const cartItem: any = {
       productId: product.id,
       name: product.title,
       image: variantToAdd.image?.url || imageUrl || "",
@@ -168,7 +238,23 @@ export function ShopifyProductCard({
       color: selectedColorValue || "Standard",
       quantity: 1,
       deliveryDays,
-    });
+    };
+
+    // Add optional fields
+    if (purityValue) {
+      cartItem.purity = purityValue;
+    }
+    if (sizeValue !== undefined && sizeValue > 0) {
+      cartItem.size = sizeValue;
+    }
+
+    console.log("\n=== ADDING TO CART ===");
+    console.log("Cart Item:", cartItem);
+    console.log("Size Value:", sizeValue);
+    console.log("Purity Value:", purityValue);
+
+    addToCart(cartItem);
+    console.log("✅ ITEM ADDED TO CART SUCCESSFULLY");
 
     setCartOpen(true);
   };
