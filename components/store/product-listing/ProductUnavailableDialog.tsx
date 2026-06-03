@@ -83,7 +83,16 @@ export function ProductUnavailableDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-white bg-opacity-100">
+      <DialogContent
+        className="
+          max-w-md
+          bg-white!
+          opacity-100!
+          border
+          shadow-2xl
+          backdrop-blur-none
+        "
+      >
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-amber-600" />
@@ -97,25 +106,23 @@ export function ProductUnavailableDialog({
             Out Of Stock.
           </DialogDescription>
         </DialogHeader>
-
         <div className="space-y-4 py-4">
           <p className="font-sans text-base text-gray-700">
             Would You Like Us To Notify You When This Product Becomes Available,
             Or Place A Custom Request For A Similar Piece?
           </p>
         </div>
-
         <div className="flex gap-3">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="flex-1"
+            className="flex-1 font-sans"
           >
             Cancel
           </Button>
           <Button
             onClick={handlePlaceRequest}
-            className="flex-1 bg-evolRed hover:bg-red-700 text-white"
+            className="flex-1 bg-evolRed hover:bg-red-700 text-white font-sans"
           >
             Place Request
           </Button>
