@@ -43,7 +43,7 @@ export function ProductUnavailableDialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center p-4"
             onClick={handleCloseSuccess}
           >
             <motion.div
@@ -58,14 +58,13 @@ export function ProductUnavailableDialog({
                   <Check className="w-6 h-6 text-green-600" />
                 </div>
                 <h2 className="font-serif text-2xl text-gray-900 mb-2">
-                  Request Received
+                  Request received
                 </h2>
-                <p className="font-body text-gray-600 mb-6">
-                  Thank You for Your Interest! Our Jewelry Experts will Contact
-                  you Shortly to Help you Customize this Beautiful Piece.
+                <p className="font-sans text-base text-gray-600 mb-6">
+                  Thank you for your interest! Our jewelry experts will contact you shortly to help you customize this beautiful piece.
                 </p>
-                <p className="font-body text-sm text-gray-500 mb-6">
-                  Expected Response Time: 1-2 Business Days
+                <p className="font-sans text-sm text-gray-500 mb-6">
+                  Expected response time: 1-2 business days
                 </p>
                 <Button
                   onClick={handleCloseSuccess}
@@ -87,18 +86,16 @@ export function ProductUnavailableDialog({
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-amber-600" />
-            <DialogTitle>Product Not Available</DialogTitle>
+            <DialogTitle>Product not available</DialogTitle>
           </div>
-          <DialogDescription className="pt-2">
-            The selected variant of <span className="font-semibold">{productTitle}</span> is
-            currently out of stock.
+          <DialogDescription className="pt-2 font-sans text-base">
+            The selected variant of <span className="font-semibold">{productTitle}</span> is currently out of stock.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <p className="text-sm text-gray-700">
-            Would you like us to notify you when this product becomes available,
-            or place a custom request for a similar piece?
+          <p className="font-sans text-base text-gray-700">
+            Would you like us to notify you when this product becomes available, or place a custom request for a similar piece?
           </p>
         </div>
 
