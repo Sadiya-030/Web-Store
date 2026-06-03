@@ -84,9 +84,13 @@ export function ShopifyProductCard({
   }, [uniqueColors.length, selectedColorValue]);
 
   // Get the selected variant based on color selection
+  // If no colors found (e.g., gold beans with only weight options), use first variant
   const selectedVariant = selectedColorValue
     ? colorVariants.find((cv) => cv?.label === selectedColorValue)?.variant
     : product.variants[0];
+
+  // Check if product has color options (for gold beans and similar products)
+  const hasColorOptions = uniqueColors.length > 0;
 
   const price = parseInt(selectedVariant?.price || "0");
   const imageUrl = selectedVariant?.image?.url || product.images[0]?.url;
@@ -108,7 +112,10 @@ export function ShopifyProductCard({
     e.preventDefault();
     e.stopPropagation();
 
-    if (!selectedVariant || !selectedColorValue) return;
+    if (!selectedVariant) return;
+
+    // Only require selectedColorValue if product has color options
+    if (hasColorOptions && !selectedColorValue) return;
 
     // Check if variant is available for sale
     if (!selectedVariant.availableForSale) {
@@ -121,7 +128,7 @@ export function ShopifyProductCard({
       name: product.title,
       image: imageUrl || "",
       price,
-      color: selectedColorValue,
+      color: selectedColorValue || "Standard",
       quantity: 1,
       deliveryDays,
     });
