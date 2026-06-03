@@ -1,17 +1,24 @@
 "use client";
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { parseMetafieldKeyValues } from "@/lib/utils/deliveryDate";
 import type { ShopifyMetafield } from "@/lib/types";
 
 interface ProductAboutSectionProps {
   metafields?: ShopifyMetafield[];
   description?: string;
-  descriptionHtml?: string;
 }
 
 export function ProductAboutSection({
   metafields,
   description,
-  descriptionHtml,
 }: ProductAboutSectionProps) {
   if (!metafields || metafields.length === 0) return null;
 
@@ -25,89 +32,96 @@ export function ProductAboutSection({
 
   // Extract specific fields for "About This Product"
   const bottomDescription = getMetafieldValue("bottom_description");
-  const diamondWeight = getMetafieldValue("diamond_weight");
-  const netWeight = getMetafieldValue("net_weight");
-  const totalWeight = getMetafieldValue("total_weight");
-  const deliveryTime = getMetafieldValue("delivery_time");
+  const stoneDetails = getMetafieldValue("stone_details");
+  const topDetails = getMetafieldValue("top_details");
+
+  // Parse the metafield content into key-value pairs
+  const stonePairs = parseMetafieldKeyValues(stoneDetails);
+  const topPairs = parseMetafieldKeyValues(topDetails);
 
   // Check if there's any content to display
-  const hasDescriptionContent =
-    bottomDescription || description || descriptionHtml;
-  const hasSpecs = diamondWeight || netWeight || totalWeight || deliveryTime;
+  const hasDescriptionContent = bottomDescription || description;
 
-  if (!hasDescriptionContent && !hasSpecs) return null;
+  if (!hasDescriptionContent && stonePairs.length === 0 && topPairs.length === 0) return null;
 
   return (
     <div className="space-y-8 py-8">
-      {/* Main Description */}
-      {hasDescriptionContent && (
-        <div>
-          <h3 className="font-sans text-sm tracking-wider text-gray-500 uppercase mb-4">
-            About This Product
-          </h3>
-          {descriptionHtml ? (
-            <div
-              className="prose prose-sm max-w-none text-gray-700 space-y-4"
-              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-            />
-          ) : (
-            <p className="font-body text-sm text-gray-700 leading-relaxed">
-              {bottomDescription || description}
-            </p>
-          )}
-        </div>
-      )}
+      <div>
+        <h3 className="font-sans text-sm tracking-wider text-gray-500 uppercase mb-4">
+          About This Product
+        </h3>
+        {hasDescriptionContent && (
+          <p className="font-sans text-sm text-gray-700 leading-relaxed mb-6">
+            {bottomDescription || description}
+          </p>
+        )}
 
-      {/* Product Specifications */}
-      {hasSpecs && (
-        <div>
-          <h3 className="font-sans text-sm tracking-wider text-gray-500 uppercase mb-4">
-            Specifications
-          </h3>
-          <div className="space-y-3">
-            {diamondWeight && (
-              <div className="flex justify-between items-start">
-                <span className="font-body text-sm text-gray-600">
-                  Diamond Weight:
-                </span>
-                <span className="font-body text-sm text-gray-900 font-medium">
-                  {diamondWeight}
-                </span>
-              </div>
-            )}
-            {netWeight && (
-              <div className="flex justify-between items-start">
-                <span className="font-body text-sm text-gray-600">
-                  Net Weight:
-                </span>
-                <span className="font-body text-sm text-gray-900 font-medium">
-                  {netWeight}
-                </span>
-              </div>
-            )}
-            {totalWeight && !netWeight && (
-              <div className="flex justify-between items-start">
-                <span className="font-body text-sm text-gray-600">
-                  Total Weight:
-                </span>
-                <span className="font-body text-sm text-gray-900 font-medium">
-                  {totalWeight}
-                </span>
-              </div>
-            )}
-            {deliveryTime && (
-              <div className="flex justify-between items-start">
-                <span className="font-body text-sm text-gray-600">
-                  Delivery Time:
-                </span>
-                <span className="font-body text-sm text-gray-900 font-medium">
-                  {deliveryTime}
-                </span>
-              </div>
-            )}
+        {/* Stone Details Table */}
+        {stonePairs.length > 0 && (
+          <div className="mb-8">
+            <h4 className="font-serif text-lg font-semibold text-gray-900 mb-4">
+              Stone Details
+            </h4>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-sans font-medium">
+                    Property
+                  </TableHead>
+                  <TableHead className="font-sans font-medium">
+                    Value
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {stonePairs.map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell className="font-sans text-sm text-gray-600">
+                      {key}
+                    </TableCell>
+                    <TableCell className="font-sans text-sm text-gray-900 font-medium">
+                      {value}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Top Details Table */}
+        {topPairs.length > 0 && (
+          <div>
+            <h4 className="font-serif text-lg font-semibold text-gray-900 mb-4">
+              Weight & Specifications
+            </h4>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-sans font-medium">
+                    Property
+                  </TableHead>
+                  <TableHead className="font-sans font-medium">
+                    Value
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {topPairs.map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell className="font-sans text-sm text-gray-600">
+                      {key}
+                    </TableCell>
+                    <TableCell className="font-sans text-sm text-gray-900 font-medium">
+                      {value}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

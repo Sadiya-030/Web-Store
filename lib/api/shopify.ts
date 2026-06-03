@@ -118,12 +118,19 @@ export async function getAllProducts(): Promise<ShopifyProduct[]> {
                 }
               }
             }
-            variants(first: 1) {
+            variants(first: 100) {
               edges {
                 node {
                   id
                   price
                   title
+                  selectedOptions {
+                    name
+                    value
+                  }
+                  image {
+                    url
+                  }
                 }
               }
             }
@@ -156,6 +163,12 @@ export async function getAllProducts(): Promise<ShopifyProduct[]> {
             id: variant.node.id,
             price: variant.node.price,
             title: variant.node.title,
+            image: variant.node.image,
+            selectedOptions:
+              variant.node.selectedOptions?.map((opt: any) => ({
+                name: opt.name,
+                value: opt.value,
+              })) || [],
           })) || [],
         tags: product.tags || [],
         description: product.description,

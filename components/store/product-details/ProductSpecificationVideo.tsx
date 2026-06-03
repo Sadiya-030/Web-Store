@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import type { ShopifyMetafield } from "@/lib/types";
 import { getBestVideoSource } from "@/lib/utils/videoQuality";
 
@@ -71,20 +72,24 @@ export function ProductSpecificationVideo({
 
     if (bestSource) {
       return (
-        <div className="py-8 border-b border-evol-grey">
-          <h3 className="font-sans text-sm tracking-wider text-gray-500 uppercase mb-6">
+        <div className="py-4 md:py-6">
+          <h3 className="font-sans text-sm tracking-wider text-gray-500 uppercase mb-3 md:mb-4">
             Product Showcase
           </h3>
-          <div className="relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden">
+          <div className="relative w-full bg-white rounded-lg overflow-hidden md:h-155">
             <video
               ref={videoRef}
               controls
               muted
-              className="w-full h-full"
+              className="w-full h-full object-cover"
               title="Product Specification Video"
               suppressHydrationWarning
             >
-              <source src={bestSource.url} type={bestSource.mimeType} suppressHydrationWarning />
+              <source
+                src={bestSource.url}
+                type={bestSource.mimeType}
+                suppressHydrationWarning
+              />
               Your Browser Does Not Support the Video Tag.
             </video>
           </div>
@@ -96,15 +101,17 @@ export function ProductSpecificationVideo({
   // Fallback to featured image if no video found
   if (featuredImageUrl) {
     return (
-      <div className="py-8 border-b border-evol-grey">
-        <h3 className="font-sans text-sm tracking-wider text-gray-500 uppercase mb-6">
+      <div className="py-4 md:py-6">
+        <h3 className="font-sans text-sm tracking-wider text-gray-500 uppercase mb-3 md:mb-4">
           Product Showcase
         </h3>
         <div className="flex justify-start rounded-lg bg-white p-4">
-          <img
+          <Image
             src={featuredImageUrl}
-            alt="Product showcase"
-            className="h-auto max-h-125 w-auto max-w-full object-contain"
+            alt="Product Showcase"
+            width={50}
+            height={50}
+            className="w-12.5! h-2.5! object-contain"
           />
         </div>
       </div>

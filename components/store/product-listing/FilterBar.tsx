@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useFilterStore } from "@/lib/stores/filterStore";
 import type { FilterBarProps } from "@/lib/types";
@@ -8,6 +8,7 @@ import { DEFAULT_FILTER_OPTIONS } from "@/lib/types/filterConfig";
 import { filtersToURLParams } from "@/lib/utils/filterParamsMapping";
 import { parseFilterParams } from "@/lib/utils/filterParamParser";
 import { X, ChevronDown } from "lucide-react";
+import { STONE_SHAPES } from "@/lib/utils/configurators";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -102,12 +103,21 @@ export function FilterBar({
       {
         key: "shape",
         label: "Stone Shape",
-        options: options.shape.map((v: string) => ({
-          label: v,
-          value: v,
-        })),
+        options: options.shape.map((v: string) => {
+          // Capitalize first letter for case-insensitive matching
+          const capitalizedV = v.charAt(0).toUpperCase() + v.slice(1);
+          const shapeData = STONE_SHAPES.find(
+            (s) => s.value.toLowerCase() === v.toLowerCase(),
+          );
+          return {
+            label: v,
+            value: v,
+            imageUrl: `/shapes/${capitalizedV}.png`,
+          };
+        }),
         isActive: filters.shape.length > 0,
         values: filters.shape,
+        isImageGrid: true,
       },
       {
         key: "occasion",
@@ -181,6 +191,61 @@ export function FilterBar({
                   <span className="font-sans font-medium">{pill.label}</span>
                   <X className="w-4 h-4 md:w-5 md:h-5" />
                 </Button>
+              ) : pill.isImageGrid ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-md! whitespace-nowrap text-sm md:text-base font-medium bg-white border border-evol-grey text-evol-dark-grey hover:border-evolRed hover:shadow-sm transition-all duration-200">
+                      <span className="font-sans font-medium">
+                        {pill.label}
+                      </span>
+                      <ChevronDown className="w-4 h-4 md:w-5 md:h-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    sideOffset={8}
+                    className="w-80 bg-white border border-evol-grey rounded-md! shadow-lg p-3 data-[state=open]:animate-none data-[state=closed]:animate-none"
+                    suppressHydrationWarning
+                  >
+                    {pill.key !== "shape" && (
+                      <>
+                        <DropdownMenuLabel className="font-serif text-sm px-0 py-1 mb-2">
+                          {pill.label}
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator className="my-2" />
+                      </>
+                    )}
+                    <div className={`grid gap-2 ${pill.key === "shape" ? "grid-cols-4" : "grid-cols-5"}`}>
+                      {pill.options.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleFilterChange(
+                              pill.key,
+                              option.value,
+                              !pill.values.includes(option.value),
+                            );
+                          }}
+                          className={`relative p-1.5 rounded-md transition-all border-2 flex items-center justify-center ${
+                            pill.values.includes(option.value)
+                              ? "border-evolRed bg-red-50"
+                              : "border-evol-grey hover:border-evolRed"
+                          }`}
+                          title={option.label}
+                        >
+                          {option.imageUrl ? (
+                            <img
+                              src={option.imageUrl}
+                              alt={option.label}
+                              className="w-10 h-10 object-contain"
+                            />
+                          ) : null}
+                        </button>
+                      ))}
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
