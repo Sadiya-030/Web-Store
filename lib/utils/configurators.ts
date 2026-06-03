@@ -13,17 +13,31 @@ export type StoneShape =
   | "Radiant"
   | "Marquise"
   | "Asscher"
-  | "Ashoka"
   | "Heart"
   | "Shield"
-  | "Kite";
-export type SettingType = "Prong" | "Pave" | "Bezel" | "Half Bezel" | "Prong Pave";
+  | "Kite"
+  | "Trillion"
+  | "Cushion"
+  | "Baguette"
+  | "Princess";
+export type SettingType =
+  | "Prong"
+  | "Pave"
+  | "Bezel"
+  | "Half Bezel"
+  | "Prong Pave";
 
 // Ring specific
 export type RingSize = 5 | 6 | 7 | 8 | 9 | 10;
 
 // Earring specific
-export type EarringStyle = "Studs" | "Hoops" | "Drops" | "Huggie" | "Jhumkas" | "Solitaire";
+export type EarringStyle =
+  | "Studs"
+  | "Hoops"
+  | "Drops"
+  | "Huggie"
+  | "Jhumkas"
+  | "Solitaire";
 export type BackType = "Pushback" | "Leverback" | "Clip-On" | "Hug";
 
 // Necklace specific
@@ -50,7 +64,15 @@ export interface ConfiguratorOption<T = string> {
 export interface ConfiguratorSection {
   id: string;
   label: string;
-  type: "swatch" | "toggle" | "chips" | "cards" | "slider" | "dropdown" | "text";
+  type:
+    | "swatch"
+    | "toggle"
+    | "chips"
+    | "cards"
+    | "slider"
+    | "dropdown"
+    | "text"
+    | "image-grid";
   options: ConfiguratorOption<string | number>[];
   required: boolean;
   defaultValue?: any;
@@ -122,7 +144,7 @@ export const PURITY_OPTIONS: ConfiguratorOption<Purity>[] = [
   { label: "18 KT", value: "18 KT", priceModifier: 0 },
 ];
 
-// Stone shapes
+// Stone shapes with images
 export const STONE_SHAPES: ConfiguratorOption<StoneShape>[] = [
   "Round",
   "Oval",
@@ -131,13 +153,17 @@ export const STONE_SHAPES: ConfiguratorOption<StoneShape>[] = [
   "Radiant",
   "Marquise",
   "Asscher",
-  "Ashoka",
   "Heart",
   "Shield",
   "Kite",
+  "Trillion",
+  "Cushion",
+  "Baguette",
+  "Princess",
 ].map((shape) => ({
   label: shape,
   value: shape as StoneShape,
+  imageUrl: `/shapes/${shape}.png`,
 }));
 
 // Setting types
@@ -150,7 +176,9 @@ export const SETTING_TYPES: ConfiguratorOption<SettingType>[] = [
 ];
 
 // Ring sizes
-export const RING_SIZES: ConfiguratorOption<RingSize>[] = [5, 6, 7, 8, 9, 10].map((size) => ({
+export const RING_SIZES: ConfiguratorOption<RingSize>[] = [
+  5, 6, 7, 8, 9, 10,
+].map((size) => ({
   label: String(size),
   value: size as RingSize,
 }));
@@ -251,7 +279,7 @@ export const CATEGORY_CONFIGURATORS: Record<string, ConfiguratorSection[]> = {
     {
       id: "stoneShape",
       label: "Stone Shape",
-      type: "chips",
+      type: "image-grid",
       options: STONE_SHAPES,
       required: false,
     },
@@ -275,7 +303,7 @@ export const CATEGORY_CONFIGURATORS: Record<string, ConfiguratorSection[]> = {
     {
       id: "ringSize",
       label: "Ring Size",
-      type: "chips",
+      type: "dropdown",
       options: RING_SIZES,
       required: true,
       defaultValue: 7,
@@ -301,7 +329,7 @@ export const CATEGORY_CONFIGURATORS: Record<string, ConfiguratorSection[]> = {
     {
       id: "stoneShape",
       label: "Stone Shape",
-      type: "chips",
+      type: "image-grid",
       options: STONE_SHAPES,
       required: false,
     },
@@ -348,7 +376,7 @@ export const CATEGORY_CONFIGURATORS: Record<string, ConfiguratorSection[]> = {
     {
       id: "stoneShape",
       label: "Stone Shape",
-      type: "chips",
+      type: "image-grid",
       options: STONE_SHAPES,
       required: false,
     },
@@ -431,7 +459,7 @@ export const CATEGORY_CONFIGURATORS: Record<string, ConfiguratorSection[]> = {
     {
       id: "stoneShape",
       label: "Stone Shape",
-      type: "chips",
+      type: "image-grid",
       options: STONE_SHAPES,
       required: false,
     },
@@ -448,7 +476,9 @@ export const CATEGORY_CONFIGURATORS: Record<string, ConfiguratorSection[]> = {
 /**
  * Get configurator sections for a specific product category
  */
-export function getConfiguratorSections(category: string): ConfiguratorSection[] {
+export function getConfiguratorSections(
+  category: string,
+): ConfiguratorSection[] {
   const categoryLower = category.toLowerCase();
 
   // Match category to configurator
@@ -458,7 +488,6 @@ export function getConfiguratorSections(category: string): ConfiguratorSection[]
     }
   }
 
-  // Default to rings if category not recognized
   return CATEGORY_CONFIGURATORS.rings;
 }
 
@@ -481,7 +510,10 @@ export function buildDynamicConfiguratorSections(
     const name = option.name.toLowerCase();
 
     // Skip carat/weight options - don't show them
-    if (name.includes("carat") || (name.includes("weight") && !name.includes("gross"))) {
+    if (
+      name.includes("carat") ||
+      (name.includes("weight") && !name.includes("gross"))
+    ) {
       return;
     }
 
@@ -495,11 +527,8 @@ export function buildDynamicConfiguratorSections(
       type = "swatch";
     } else if (name.includes("purity")) {
       type = "toggle";
-    } else if (
-      name.includes("size") ||
-      name.includes("length")
-    ) {
-      type = "chips";
+    } else if (name.includes("size") || name.includes("length")) {
+      type = "dropdown";
     } else if (name.includes("style") || name.includes("type")) {
       type = "cards";
     }
@@ -518,7 +547,7 @@ export function buildDynamicConfiguratorSections(
       configuratorOptions = option.values.map((value) => {
         // Find matching color from METAL_COLORS
         const metalColor = METAL_COLORS.find(
-          (m) => m.value === value || m.label === value
+          (m) => m.value === value || m.label === value,
         );
         return {
           label: value,
