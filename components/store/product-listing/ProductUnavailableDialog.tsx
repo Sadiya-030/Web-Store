@@ -83,11 +83,13 @@ export function ProductUnavailableDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-white bg-opacity-100">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-amber-600" />
-            <DialogTitle className="font-sans">Product Not Available</DialogTitle>
+            <DialogTitle className="font-sans">
+              Product Not Available
+            </DialogTitle>
           </div>
           <DialogDescription className="pt-2 font-sans text-base">
             The Selected Variant Of{" "}
