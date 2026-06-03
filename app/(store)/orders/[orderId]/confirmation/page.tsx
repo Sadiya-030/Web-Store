@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { CheckCircle } from "lucide-react";
 import { useCheckoutStore } from "@/lib/stores/checkoutStore";
 import { Button } from "@/components/ui/button";
+import { CartItemList } from "@/components/common/cart/CartItemList";
 
 export default function OrderConfirmationPage({
   params,
@@ -54,13 +55,13 @@ export default function OrderConfirmationPage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <h1 className="text-28px font-playfair text-evol-dark-grey mb-3">
+          <h1 className="text-4xl md:text-5xl font-serif text-evol-dark-grey mb-3">
             Your Order is Placed.
           </h1>
-          <p className="text-14px font-inter text-evol-grey mb-2">
+          <p className="text-lg font-sans text-evol-grey mb-2">
             Order #{confirmedOrder.orderId}
           </p>
-          <p className="text-15px font-dmsans text-evol-dark-grey">
+          <p className="text-base font-sans text-evol-dark-grey">
             We'll Send a Confirmation to Your Email. Expect Your Piece in{" "}
             {Math.ceil(
               (new Date(confirmedOrder.estimatedDelivery).getTime() -
@@ -81,23 +82,23 @@ export default function OrderConfirmationPage({
           <div className="bg-evol-off-white p-6 md:p-8 space-y-6">
             {/* Delivery Section */}
             <div>
-              <h3 className="text-12px font-inter uppercase tracking-widest text-evol-dark-grey mb-3">
+              <h3 className="text-sm font-sans uppercase tracking-widest text-evol-dark-grey mb-3">
                 Delivering To
               </h3>
-              <p className="text-14px font-inter font-medium text-evol-dark-grey">
+              <p className="text-base font-sans font-medium text-evol-dark-grey">
                 {confirmedOrder.address.fullName}
               </p>
-              <p className="text-13px font-dmsans text-evol-dark-grey mt-2">
+              <p className="text-sm font-sans text-evol-dark-grey mt-2">
                 {confirmedOrder.address.addressLine1}
                 {confirmedOrder.address.addressLine2 && (
                   <>, {confirmedOrder.address.addressLine2}</>
                 )}
               </p>
-              <p className="text-13px font-dmsans text-evol-dark-grey">
+              <p className="text-sm font-sans text-evol-dark-grey">
                 {confirmedOrder.address.city}, {confirmedOrder.address.state}{" "}
                 {confirmedOrder.address.pinCode}
               </p>
-              <p className="text-13px font-dmsans text-evol-dark-grey">
+              <p className="text-sm font-sans text-evol-dark-grey">
                 +91 {confirmedOrder.address.phone}
               </p>
             </div>
@@ -106,56 +107,32 @@ export default function OrderConfirmationPage({
 
             {/* Items Section */}
             <div>
-              <h3 className="text-12px font-inter uppercase tracking-widest text-evol-dark-grey mb-3">
+              <h3 className="text-sm font-sans uppercase tracking-widest text-evol-dark-grey mb-3">
                 Items Ordered
               </h3>
-              <div className="space-y-3">
-                {confirmedOrder.items.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="relative w-16 h-16 shrink-0">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover rounded border border-evol-grey"
-                      />
-                      {item.quantity > 1 && (
-                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-evol-dark-grey rounded-full flex items-center justify-center text-white text-10px font-medium">
-                          {item.quantity}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-13px font-inter font-medium text-evol-dark-grey truncate">
-                        {item.title}
-                      </p>
-                      <p className="text-11px font-dmsans text-evol-grey mt-1">
-                        {item.configuration}
-                      </p>
-                      <p className="text-13px font-inter text-evol-dark-grey mt-1">
-                        ₹{(item.price * item.quantity).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CartItemList
+                items={confirmedOrder.items}
+                variant="checkout"
+                showQuantityControls={false}
+              />
             </div>
 
             <div className="border-t border-evol-grey" />
 
             {/* Payment Section */}
             <div>
-              <h3 className="text-12px font-inter uppercase tracking-widest text-evol-dark-grey mb-3">
+              <h3 className="text-sm font-sans uppercase tracking-widest text-evol-dark-grey mb-3">
                 Payment
               </h3>
               <div className="space-y-2">
-                <div className="flex justify-between text-13px font-inter">
+                <div className="flex justify-between text-sm font-sans">
                   <span className="text-evol-dark-grey">Subtotal</span>
                   <span className="text-evol-dark-grey">
                     ₹{confirmedOrder.subtotal.toLocaleString()}
                   </span>
                 </div>
                 {confirmedOrder.discount > 0 && (
-                  <div className="flex justify-between text-13px font-inter">
+                  <div className="flex justify-between text-sm font-sans">
                     <span className="text-evol-dark-grey">Discount</span>
                     <span className="text-evolRed">
                       - ₹{confirmedOrder.discount.toLocaleString()}
@@ -163,15 +140,15 @@ export default function OrderConfirmationPage({
                   </div>
                 )}
                 <div className="pt-2 border-t border-evol-light-grey flex justify-between">
-                  <span className="text-13px font-inter text-evol-dark-grey">
+                  <span className="text-sm font-sans text-evol-dark-grey">
                     Total
                   </span>
-                  <span className="text-16px font-inter font-medium text-evol-dark-grey">
+                  <span className="text-base font-sans font-medium text-evol-dark-grey">
                     ₹{confirmedOrder.total.toLocaleString()}
                   </span>
                 </div>
               </div>
-              <p className="text-12px font-dmsans text-evol-dark-grey mt-3">
+              <p className="text-sm font-sans text-evol-dark-grey mt-3">
                 Paid Via Razorpay · Ref: {confirmedOrder.paymentRef}
               </p>
             </div>
@@ -189,14 +166,14 @@ export default function OrderConfirmationPage({
             onClick={() =>
               router.push(`/orders/${confirmedOrder.orderId}/track`)
             }
-            className="w-full h-12 bg-evolRed hover:bg-red-700 text-white font-sans font-medium"
+            className="w-full h-12 bg-evolRed hover:bg-red-700 text-white font-sans font-semibold text-base"
           >
             Track Your Order →
           </Button>
           <Button
             variant="ghost"
             onClick={() => router.push("/collections/shop")}
-            className="w-full h-12 text-evolRed"
+            className="w-full h-12 text-evolRed font-sans font-semibold text-base"
           >
             Continue Shopping
           </Button>
@@ -204,7 +181,7 @@ export default function OrderConfirmationPage({
 
         {/* Footer */}
         <motion.p
-          className="text-center text-12px font-dmsans text-evol-grey"
+          className="text-center text-sm font-sans text-evol-grey"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.9 }}

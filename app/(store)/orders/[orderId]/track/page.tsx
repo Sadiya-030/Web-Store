@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/lib/stores/checkoutStore";
 import { Button } from "@/components/ui/button";
-import { CalendarCheck } from "lucide-react";
+import { CalendarCheck, ExternalLink } from "lucide-react";
 
 interface Milestone {
   id: string;
@@ -25,12 +25,12 @@ export default function OrderTrackingPage({
     return (
       <div className="min-h-screen bg-evol-light-grey flex items-center justify-center px-4">
         <div className="text-center">
-          <h1 className="text-24px font-playfair text-evol-dark-grey mb-4">
+          <h1 className="text-4xl md:text-5xl font-serif text-evol-dark-grey mb-4">
             Order Not Found
           </h1>
           <Button
             onClick={() => router.push("/collections/shop")}
-            className="h-12 bg-evolRed hover:bg-red-700 text-white font-sans font-medium"
+            className="h-12 bg-evolRed hover:bg-red-700 text-white font-sans font-semibold text-base"
           >
             Back To Shop
           </Button>
@@ -87,10 +87,10 @@ export default function OrderTrackingPage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
         >
-          <h1 className="text-24px font-playfair text-evol-dark-grey mb-2">
+          <h1 className="text-4xl md:text-5xl font-serif text-evol-dark-grey mb-2">
             Track Your Order
           </h1>
-          <p className="text-14px font-inter text-evol-grey">
+          <p className="text-lg font-sans text-evol-grey">
             Order #{confirmedOrder.orderId} · Placed{" "}
             {placedDate.toLocaleDateString("en-IN", {
               day: "numeric",
@@ -159,7 +159,7 @@ export default function OrderTrackingPage({
                 {/* Content */}
                 <div className="pt-0.5 flex-1">
                   <p
-                    className={`text-14px font-inter font-medium ${
+                    className={`text-base font-sans font-medium ${
                       milestone.status === "upcoming"
                         ? "text-evol-grey"
                         : "text-evol-dark-grey"
@@ -168,7 +168,7 @@ export default function OrderTrackingPage({
                     {milestone.label}
                   </p>
                   {milestone.timestamp && (
-                    <p className="text-12px font-dmsans text-evol-grey mt-1">
+                    <p className="text-sm font-sans text-evol-grey mt-1">
                       {milestone.timestamp}
                     </p>
                   )}
@@ -185,35 +185,39 @@ export default function OrderTrackingPage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.3 }}
         >
-          <h3 className="text-14px font-inter font-medium text-evol-dark-grey mb-4">
+          <h3 className="text-base font-sans font-medium text-evol-dark-grey mb-4">
             Courier Details
           </h3>
           <div className="space-y-3">
             <div>
-              <p className="text-12px font-inter uppercase tracking-widest text-evol-grey">
+              <p className="text-sm font-sans uppercase tracking-widest text-evol-grey">
                 Carrier
               </p>
-              <p className="text-14px font-inter text-evol-dark-grey mt-1">
+              <p className="text-base font-sans text-evol-dark-grey mt-1">
                 Delhivery
               </p>
             </div>
             <div>
-              <p className="text-12px font-inter uppercase tracking-widest text-evol-grey">
+              <p className="text-sm font-sans uppercase tracking-widest text-evol-grey">
                 Tracking ID
               </p>
-              <p className="text-14px font-inter text-evol-dark-grey mt-1 font-mono">
+              <p className="text-base font-sans text-evol-dark-grey mt-1">
                 DEL9182736450
               </p>
             </div>
-            <Button className="text-13px font-inter text-evolRed hover:opacity-80">
-              Open Carrier Website →
+            <Button
+              variant="ghost"
+              className="h-auto p-0 justify-start text-sm font-sans text-evolRed flex items-center gap-1"
+            >
+              Open Carrier Website
+              <ExternalLink className="w-4 h-4" />
             </Button>
           </div>
         </motion.div>
 
         {/* Estimated Delivery */}
         <motion.div
-          className="flex items-center gap-3 text-14px font-dmsans text-evol-dark-grey"
+          className="flex items-center gap-3 text-base font-sans text-evol-dark-grey"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.4 }}
@@ -238,11 +242,11 @@ export default function OrderTrackingPage({
         >
           <Button
             onClick={() => router.push("/collections/shop")}
-            className="w-full h-12 bg-evolRed hover:bg-red-700 text-white font-sans font-medium"
+            className="w-full h-12 bg-evolRed hover:bg-red-700 text-white font-sans font-semibold text-base"
           >
             Continue Shopping
           </Button>
-          <p className="text-center text-12px font-dmsans text-evol-grey">
+          <p className="text-center text-sm font-sans text-evol-grey">
             Questions?{" "}
             <a
               href="mailto:sadiya.siddiqui@evoljewels.com"

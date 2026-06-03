@@ -77,7 +77,9 @@ export function StepProgress({
 
   if (isMobile) {
     return (
-      <div className={`bg-white border-b border-evol-grey px-4 py-4 ${className}`}>
+      <div
+        className={`bg-white border-b border-evol-grey px-4 py-4 ${className}`}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
             <div className="h-1 flex-1 bg-evol-grey rounded-full overflow-hidden">
@@ -85,7 +87,9 @@ export function StepProgress({
                 className="h-full"
                 style={{ backgroundColor: activeColor }}
                 initial={{ width: "0%" }}
-                animate={{ width: `${((currentIndex + 1) / steps.length) * 100}%` }}
+                animate={{
+                  width: `${((currentIndex + 1) / steps.length) * 100}%`,
+                }}
                 transition={{ duration: 0.5 }}
               />
             </div>
@@ -113,9 +117,13 @@ export function StepProgress({
               {/* Circle */}
               <div className="relative">
                 <motion.div
-                  className="w-12 h-12 rounded-full flex items-center justify-center font-medium text-white"
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
                   animate={{
-                    backgroundColor: isCompleted ? completedColor : isActive ? activeColor : inactiveColor,
+                    backgroundColor: isCompleted
+                      ? completedColor
+                      : isActive
+                        ? activeColor
+                        : inactiveColor,
                   }}
                   transition={{ duration: 0.3 }}
                 >
@@ -128,7 +136,11 @@ export function StepProgress({
                       <Check className="w-5 h-5" />
                     </motion.div>
                   ) : (
-                    <span className={isActive ? "text-white" : "text-evol-grey"}>
+                    <span
+                      className={`flex items-center justify-center leading-none font-bold ${
+                        isActive ? "text-white" : "text-evol-grey"
+                      } text-2xl -mt-0.75`}
+                    >
                       {step.number}
                     </span>
                   )}
@@ -139,7 +151,9 @@ export function StepProgress({
               <div className="flex flex-col gap-2">
                 <p
                   className={`text-12px font-inter uppercase tracking-wider ${
-                    isCompleted || isActive ? "text-evol-dark-grey" : "text-evol-grey"
+                    isCompleted || isActive
+                      ? "text-evol-dark-grey"
+                      : "text-evol-grey"
                   }`}
                 >
                   {step.label}
@@ -151,7 +165,9 @@ export function StepProgress({
                 <motion.div
                   className="w-16 h-0.5 ml-4"
                   animate={{
-                    backgroundColor: isCompleted ? completedColor : inactiveColor,
+                    backgroundColor: isCompleted
+                      ? completedColor
+                      : inactiveColor,
                   }}
                   transition={{ duration: 0.3 }}
                 />

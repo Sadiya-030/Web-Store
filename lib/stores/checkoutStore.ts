@@ -16,9 +16,11 @@ export interface CartItem {
   productId: string;
   title: string;
   image: string;
+  color: string;
   configuration: string;
   price: number;
   quantity: number;
+  deliveryDays?: number;
 }
 
 export interface ConfirmedOrder {
@@ -33,7 +35,7 @@ export interface ConfirmedOrder {
   paymentRef: string;
 }
 
-export type CheckoutStep = "delivery" | "review" | "payment" | "confirmed";
+export type CheckoutStep = "delivery";
 
 interface CheckoutStore {
   // Step state
@@ -79,8 +81,6 @@ export const useCheckoutStore = create<CheckoutStore>((set, get) => ({
   setDeliveryAddress: (address) => set({ deliveryAddress: address }),
 
   applyDiscount: (code) => {
-    // Mock discount validation
-    // In production, validate against backend
     const discounts: Record<string, number> = {
       EVOL10: 5584,
       EVOL20: 11168,
@@ -95,8 +95,7 @@ export const useCheckoutStore = create<CheckoutStore>((set, get) => ({
     return false;
   },
 
-  clearDiscount: () =>
-    set({ discountCode: null, discountAmount: 0 }),
+  clearDiscount: () => set({ discountCode: null, discountAmount: 0 }),
 
   setCartItems: (items) => set({ cartItems: items }),
 
