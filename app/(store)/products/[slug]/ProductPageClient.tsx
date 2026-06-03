@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion } from "motion/react";
-import { Heart, Loader2 } from "lucide-react";
+import { Heart, Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/common/media/ImageGallery";
 import { RingSizeGuide } from "@/components/store/product-details/RingSizeGuide";
@@ -267,7 +267,21 @@ export function ProductPageClient({ shopifyProduct }: ProductPageClientProps) {
     return Math.max(0, price);
   }, [matchingVariant, basePrice, selectedOptions, configuratorSections]);
 
-  const isVariantAvailable = !!matchingVariant && isInStock;
+  // Check if there are any available variants for the current configuration
+  const isVariantAvailable = useMemo(() => {
+    if (!matchingVariant) {
+      // No variant matches the current selection
+      return false;
+    }
+    if (!isInStock) {
+      return false;
+    }
+    // Check if the matching variant is available for sale
+    if (!matchingVariant.availableForSale) {
+      return false;
+    }
+    return true;
+  }, [matchingVariant, isInStock]);
 
   const handleAddToCart = async () => {
     if (!isVariantAvailable) {

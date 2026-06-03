@@ -113,22 +113,44 @@ export function ShopifyProductCard({
     // Only require selectedColorValue if product has color options
     if (hasColorOptions && !selectedColorValue) return;
 
-    // For products without color, find first available variant
-    // For products with color, use the color-matched variant
     let variantToAdd = selectedVariant;
 
-    if (!hasColorOptions && product.variants.length > 0) {
-      // Find the first available variant for products without color options
+    if (hasColorOptions && selectedColorValue) {
+      // For color products, find first available variant with the selected color
+      const variantsWithSelectedColor = product.variants.filter((v) => {
+        const colorOption = v.selectedOptions?.find(
+          (opt) =>
+            opt.name.toLowerCase() === "color" ||
+            opt.name.toLowerCase() === "metal color",
+        );
+        return colorOption?.value === selectedColorValue;
+      });
+
+      if (variantsWithSelectedColor.length === 0) {
+        setShowUnavailableDialog(true);
+        return;
+      }
+
+      const availableVariant = variantsWithSelectedColor.find(
+        (v) => v.availableForSale,
+      );
+      if (!availableVariant) {
+        setShowUnavailableDialog(true);
+        return;
+      }
+
+      variantToAdd = availableVariant;
+    } else if (!hasColorOptions && product.variants.length > 0) {
+      // For products without color options, find first available variant
       const availableVariant = product.variants.find((v) => v.availableForSale);
       if (!availableVariant) {
-        // No available variants at all for any size/configuration
         setShowUnavailableDialog(true);
         return;
       }
       variantToAdd = availableVariant;
     }
 
-    // Check if the variant we're about to add is available
+    // Final safety check - variant should be available
     if (!variantToAdd?.availableForSale) {
       setShowUnavailableDialog(true);
       return;
