@@ -561,6 +561,16 @@ export function CheckoutPageClient() {
     }
   }, [cartStoreItems, setCartItems]);
 
+  // Redirect to shop page if cart becomes empty
+  useEffect(() => {
+    if (cartItems.length === 0 && cartStoreItems.length === 0) {
+      const timer = setTimeout(() => {
+        router.push("/collections/shop");
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [cartItems.length, cartStoreItems.length, router]);
+
   // Calculate totals
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,

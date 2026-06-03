@@ -83,8 +83,6 @@ export function ShopifyProductCard({
     }
   }, [uniqueColors.length, selectedColorValue]);
 
-  // Get the selected variant based on color selection
-  // If no colors found (e.g., gold beans with only weight options), use first variant
   const selectedVariant = selectedColorValue
     ? colorVariants.find((cv) => cv?.label === selectedColorValue)?.variant
     : product.variants[0];
@@ -112,15 +110,28 @@ export function ShopifyProductCard({
     e.preventDefault();
     e.stopPropagation();
 
-    if (!selectedVariant) return;
+    if (!selectedVariant) {
+      setShowUnavailableDialog(true);
+      return;
+    }
 
     // Only require selectedColorValue if product has color options
     if (hasColorOptions && !selectedColorValue) return;
 
-    // Check if variant is available for sale
+    // Check if selected variant is available for sale
     if (!selectedVariant.availableForSale) {
       setShowUnavailableDialog(true);
       return;
+    }
+
+    // For products without color options, check if there are ANY available variants
+    // This handles cases like gold beans where we might not have a specific size selected
+    if (!hasColorOptions) {
+      const hasAnyAvailableVariant = product.variants.some((v) => v.availableForSale);
+      if (!hasAnyAvailableVariant) {
+        setShowUnavailableDialog(true);
+        return;
+      }
     }
 
     addToCart({
