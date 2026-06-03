@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Heart, Loader2, Check } from "lucide-react";
+import { motion } from "motion/react";
+import { Heart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/common/media/ImageGallery";
 import { RingSizeGuide } from "@/components/store/product-details/RingSizeGuide";
 import { CertificationsBadges } from "@/components/store/product-details/CertificationsBadges";
 import { DeliveryTimelineHighlight } from "@/components/store/product-details/DeliveryTimelineHighlight";
+import { ProductUnavailableDialog } from "@/components/store/product-listing/ProductUnavailableDialog";
 import { useWishlistStore } from "@/lib/stores/wishlistStore";
 import { useCartStore } from "@/lib/stores/cartStore";
 import {
@@ -705,48 +706,12 @@ export function ProductPageClient({ shopifyProduct }: ProductPageClientProps) {
         <RingSizeGuide open={showSizeGuide} onOpenChange={setShowSizeGuide} />
       )}
 
-      {/* Expert Consultation Confirmation Modal */}
-      <AnimatePresence>
-        {showCustomizationRequest && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4"
-            onClick={() => setShowCustomizationRequest(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-lg max-w-md w-full p-8 shadow-xl"
-            >
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-6 h-6 text-green-600" />
-                </div>
-                <h2 className="font-serif text-2xl text-gray-900 mb-2">
-                  Request Received
-                </h2>
-                <p className="font-body text-gray-600 mb-6">
-                  Thank You for Your Interest! Our Jewelry Experts will Contact
-                  you Shortly to Help you Customize this Beautiful Piece.
-                </p>
-                <p className="font-body text-sm text-gray-500 mb-6">
-                  Expected Response Time: 1-2 Business Days
-                </p>
-                <Button
-                  onClick={() => setShowCustomizationRequest(false)}
-                  className="w-full bg-evolRed hover:bg-red-700 text-white font-sans font-medium py-2 rounded"
-                >
-                  Close
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Product Unavailable / Customization Request Dialog */}
+      <ProductUnavailableDialog
+        open={showCustomizationRequest}
+        onOpenChange={setShowCustomizationRequest}
+        productTitle={shopifyProduct.title}
+      />
     </div>
   );
 }
