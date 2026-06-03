@@ -88,6 +88,7 @@ export function ProductPageClient({ shopifyProduct }: ProductPageClientProps) {
   const [showCustomizationRequest, setShowCustomizationRequest] =
     useState(false);
 
+
   const deliveryTimelineString = useMemo(() => {
     if (!shopifyProduct.metafields) {
       return "18-20";
