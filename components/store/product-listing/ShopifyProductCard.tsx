@@ -110,28 +110,28 @@ export function ShopifyProductCard({
     e.preventDefault();
     e.stopPropagation();
 
-    if (!selectedVariant) {
-      setShowUnavailableDialog(true);
-      return;
-    }
-
     // Only require selectedColorValue if product has color options
     if (hasColorOptions && !selectedColorValue) return;
 
-    // Check if selected variant is available for sale
-    if (!selectedVariant.availableForSale) {
-      setShowUnavailableDialog(true);
-      return;
-    }
+    // For products without color, find first available variant
+    // For products with color, use the color-matched variant
+    let variantToAdd = selectedVariant;
 
-    // For products without color options, check if there are ANY available variants
-    // This handles cases like gold beans where we might not have a specific size selected
-    if (!hasColorOptions) {
-      const hasAnyAvailableVariant = product.variants.some((v) => v.availableForSale);
-      if (!hasAnyAvailableVariant) {
+    if (!hasColorOptions && product.variants.length > 0) {
+      // Find the first available variant for products without color options
+      const availableVariant = product.variants.find((v) => v.availableForSale);
+      if (!availableVariant) {
+        // No available variants at all for any size/configuration
         setShowUnavailableDialog(true);
         return;
       }
+      variantToAdd = availableVariant;
+    }
+
+    // Check if the variant we're about to add is available
+    if (!variantToAdd?.availableForSale) {
+      setShowUnavailableDialog(true);
+      return;
     }
 
     addToCart({

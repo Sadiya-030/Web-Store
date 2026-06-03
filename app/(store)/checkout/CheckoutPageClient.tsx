@@ -564,10 +564,7 @@ export function CheckoutPageClient() {
   // Redirect to shop page if cart becomes empty
   useEffect(() => {
     if (cartItems.length === 0 && cartStoreItems.length === 0) {
-      const timer = setTimeout(() => {
-        router.push("/collections/shop");
-      }, 500);
-      return () => clearTimeout(timer);
+      router.push("/collections/shop");
     }
   }, [cartItems.length, cartStoreItems.length, router]);
 
