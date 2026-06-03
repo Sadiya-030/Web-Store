@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Check, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,8 +11,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Check, AlertCircle } from "lucide-react";
 
 interface ProductUnavailableDialogProps {
   open: boolean;
@@ -22,47 +23,61 @@ export function ProductUnavailableDialog({
   onOpenChange,
   productTitle,
 }: ProductUnavailableDialogProps) {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showCustomizationRequest, setShowCustomizationRequest] =
+    useState(false);
 
   const handlePlaceRequest = () => {
-    // TODO: Submit request to backend
-    setIsSubmitted(true);
+    setShowCustomizationRequest(true);
   };
 
-  const handleClose = () => {
-    setIsSubmitted(false);
+  const handleCloseSuccess = () => {
+    setShowCustomizationRequest(false);
     onOpenChange(false);
   };
 
-  if (isSubmitted) {
+  if (showCustomizationRequest) {
     return (
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-w-md">
-          <div className="flex flex-col items-center justify-center py-8">
-            <div className="mb-6 flex justify-center">
-              <div className="rounded-full bg-green-100 p-4">
-                <Check className="h-8 w-8 text-green-600" />
-              </div>
-            </div>
-            <h2 className="mb-3 text-center text-xl font-serif font-semibold text-gray-900">
-              Request Received
-            </h2>
-            <p className="mb-6 text-center text-sm text-gray-600">
-              Thank You for Your Interest! Our Jewelry Experts will Contact you
-              Shortly to Help you Customize this Beautiful Piece.
-            </p>
-            <p className="mb-6 text-center text-xs font-medium text-gray-500">
-              Expected Response Time: 1-2 Business Days
-            </p>
-            <Button
-              onClick={handleClose}
-              className="w-full bg-evolRed hover:bg-red-700 text-white"
+      <AnimatePresence>
+        {showCustomizationRequest && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4"
+            onClick={handleCloseSuccess}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg max-w-md w-full p-8 shadow-xl"
             >
-              Done
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-6 h-6 text-green-600" />
+                </div>
+                <h2 className="font-serif text-2xl text-gray-900 mb-2">
+                  Request Received
+                </h2>
+                <p className="font-body text-gray-600 mb-6">
+                  Thank You for Your Interest! Our Jewelry Experts will Contact
+                  you Shortly to Help you Customize this Beautiful Piece.
+                </p>
+                <p className="font-body text-sm text-gray-500 mb-6">
+                  Expected Response Time: 1-2 Business Days
+                </p>
+                <Button
+                  onClick={handleCloseSuccess}
+                  className="w-full bg-evolRed hover:bg-red-700 text-white font-sans font-medium py-2 rounded"
+                >
+                  Close
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     );
   }
 
