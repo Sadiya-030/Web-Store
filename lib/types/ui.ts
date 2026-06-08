@@ -20,6 +20,8 @@ export interface CollectionPageClientProps {
   collectionData: CollectionData;
   subCollections?: SubCollection[];
   subCollectionHandles?: string[];
+  initialCursor?: string | null;
+  initialHasNextPage?: boolean;
 }
 
 export type { ShopifyProduct, ShopifyImage, ShopifyVariant } from "./shopify";

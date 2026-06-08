@@ -2,7 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { getAllCollections, getCollectionProducts } from "@/lib/api/shopify";
+import {
+  getAllCollections,
+  getCollectionFirstProductImage,
+} from "@/lib/api/shopify";
 import {
   getMajorCollectionsWithSubcollections,
   getSubCollectionsForMajor,
@@ -37,25 +40,15 @@ async function getCollectionImages(): Promise<Collection[]> {
     const collections: Collection[] = [];
 
     for (const majorCollection of majorCollections) {
-      const subCollections = getSubCollectionsForMajor(
-        majorCollection.title,
-        allCollections,
-      );
-
       let foundImage = "";
-      if (subCollections.length > 0) {
-        try {
-          const products = await getCollectionProducts(
-            subCollections[0].handle,
-          );
-          if (products.length > 0) {
-            foundImage = products[0]?.images?.[0]?.url || "";
-          }
-        } catch (error) {
-          logger.warn(
-            `Failed to Fetch Products for Collection "${majorCollection.title}"`,
-          );
-        }
+      try {
+        foundImage = await getCollectionFirstProductImage(
+          majorCollection.handle,
+        );
+      } catch (error) {
+        logger.warn(
+          `Failed to Fetch Image for Collection "${majorCollection.title}"`,
+        );
       }
 
       collections.push({

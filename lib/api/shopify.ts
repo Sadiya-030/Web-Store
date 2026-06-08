@@ -102,7 +102,7 @@ export async function shopifyFetch<T>(
 export async function getAllProducts(): Promise<ShopifyProduct[]> {
   const query = `
     query GetProducts {
-      products(first: 100) {
+      products(first: 20) {
         edges {
           node {
             id
@@ -110,7 +110,7 @@ export async function getAllProducts(): Promise<ShopifyProduct[]> {
             handle
             vendor
             productType
-            images(first: 2) {
+            images(first: 20) {
               edges {
                 node {
                   url
@@ -118,7 +118,7 @@ export async function getAllProducts(): Promise<ShopifyProduct[]> {
                 }
               }
             }
-            variants(first: 100) {
+            variants(first: 50) {
               edges {
                 node {
                   id
@@ -259,7 +259,7 @@ export async function getProductByHandle(
       }
     }
 
-    variants(first: 100) {
+    variants(first: 50) {
       edges {
         node {
           id
@@ -435,11 +435,20 @@ export async function getProductCollections(
 
 export async function getCollectionProducts(
   collectionHandle: string,
-): Promise<ShopifyProduct[]> {
+  cursor?: string,
+): Promise<{
+  products: ShopifyProduct[];
+  hasNextPage: boolean;
+  endCursor: string | null;
+}> {
   const query = `
-    query GetCollectionProducts($handle: String!) {
+    query GetCollectionProducts($handle: String!, $cursor: String) {
       collectionByHandle(handle: $handle) {
-        products(first: 100) {
+        products(first: 20, after: $cursor) {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
           edges {
             node {
               id
@@ -475,7 +484,7 @@ export async function getCollectionProducts(
                   currencyCode
                 }
               }
-              images(first: 12) {
+              images(first: 20) {
                 edges {
                   node {
                     id
@@ -527,13 +536,15 @@ export async function getCollectionProducts(
     const shopifyHandle = getShopifyCollectionHandle(collectionHandle);
     const response = await shopifyFetch<any>(query, {
       handle: shopifyHandle,
+      cursor: cursor || null,
     });
 
     if (!response.data.collectionByHandle) {
       logger.error("Collection Not Found:", new Error(collectionHandle));
-      return [];
+      return { products: [], hasNextPage: false, endCursor: null };
     }
 
+    const pageInfo = response.data.collectionByHandle.products.pageInfo;
     const products = response.data.collectionByHandle.products.edges.map(
       (edge: any) => {
         const product = edge.node;
@@ -591,10 +602,14 @@ export async function getCollectionProducts(
       },
     );
 
-    return products;
+    return {
+      products,
+      hasNextPage: pageInfo.hasNextPage,
+      endCursor: pageInfo.endCursor,
+    };
   } catch (error) {
     logger.error("Failed to Fetch Collection Products:", error);
-    return [];
+    return { products: [], hasNextPage: false, endCursor: null };
   }
 }
 
@@ -639,7 +654,7 @@ export async function getProductsByType(
                 currencyCode
               }
             }
-            images(first: 12) {
+            images(first: 20) {
               edges {
                 node {
                   id
@@ -650,7 +665,7 @@ export async function getProductsByType(
                 }
               }
             }
-            variants(first: 100) {
+            variants(first: 50) {
               edges {
                 node {
                   id
@@ -783,5 +798,49 @@ export async function getAllCollections(): Promise<ShopifyCollectionData[]> {
   } catch (error) {
     logger.error("Failed to Fetch Collections:", error);
     return [];
+  }
+}
+
+export async function getCollectionFirstProductImage(
+  collectionHandle: string,
+): Promise<string> {
+  const query = `
+    query GetCollectionFirstImage($handle: String!) {
+      collectionByHandle(handle: $handle) {
+        products(first: 1) {
+          edges {
+            node {
+              id
+              title
+              productType
+              featuredImage {
+                url
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const shopifyHandle = getShopifyCollectionHandle(collectionHandle);
+    const response = await shopifyFetch<any>(query, {
+      handle: shopifyHandle,
+    });
+
+    if (!response.data.collectionByHandle?.products?.edges?.[0]) {
+      return "";
+    }
+
+    const product = response.data.collectionByHandle.products.edges[0].node;
+    logger.warn(
+      `[getCollectionFirstProductImage] Collection: ${shopifyHandle}, Product: ${product.title} (${product.id}), Type: ${product.productType}, Image: ${product.featuredImage?.url}`,
+    );
+
+    return product.featuredImage?.url || "";
+  } catch (error) {
+    logger.error("Failed to Fetch Collection First Image:", error);
+    return "";
   }
 }

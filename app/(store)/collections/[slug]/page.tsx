@@ -60,30 +60,17 @@ export default async function CollectionPage({
     slug.slice(1)) as MajorCollectionType;
   const subCollections = getSubCollectionsForMajor(majorType, allCollections);
 
-  // Fetch primary collection products
+  // Fetch only primary collection products initially
   let primaryProducts: ShopifyProduct[] = [];
+  let endCursor: string | null = null;
+  let hasNextPage = false;
   try {
-    primaryProducts = await getCollectionProducts(slug);
+    const result = await getCollectionProducts(slug);
+    primaryProducts = result.products;
+    endCursor = result.endCursor;
+    hasNextPage = result.hasNextPage;
   } catch (error) {
     logger.error(`Failed to Fetch Primary Collection "${slug}"`, error);
-  }
-
-  // Fetch all subcollection products upfront to enable category filtering
-  let allSubcollectionProducts: ShopifyProduct[] = [];
-  try {
-    const subcollectionPromises = subCollections.map((sc) =>
-      getCollectionProducts(sc.handle).then((products) =>
-        products.map((p) => ({
-          ...p,
-          __subCollectionHandle: sc.handle,
-          __subCollectionTitle: sc.title,
-        })),
-      ),
-    );
-    const subcollectionResults = await Promise.all(subcollectionPromises);
-    allSubcollectionProducts = subcollectionResults.flat();
-  } catch (error) {
-    logger.error(`Failed to Fetch Subcollection Products for "${slug}"`, error);
   }
 
   const collectionData = getCollectionMetadata(slug);
@@ -92,10 +79,12 @@ export default async function CollectionPage({
   return (
     <CollectionPageClient
       slug={slug}
-      products={[...allSubcollectionProducts, ...primaryProducts]}
+      products={primaryProducts}
       collectionData={collectionData}
       subCollections={subCollections}
       subCollectionHandles={subCollectionHandles}
+      initialCursor={endCursor}
+      initialHasNextPage={hasNextPage}
     />
   );
 }

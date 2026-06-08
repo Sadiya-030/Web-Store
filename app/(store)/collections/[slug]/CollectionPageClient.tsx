@@ -19,6 +19,7 @@ import { ShopifyProductGrid } from "@/components/store/product-listing/ShopifyPr
 import { ProductGridSkeleton } from "@/components/store/product-listing/ProductGridSkeleton";
 import { EmptyState } from "@/components/common/feedback/EmptyState";
 import { InfiniteScroll } from "@/components/common/loaders/InfiniteScroll";
+import { fetchSubcollectionProducts, fetchMoreCollectionProducts } from "./actions";
 import type { ShopifyProduct, CollectionPageClientProps } from "@/lib/types";
 
 const ITEMS_PER_PAGE = 12;
@@ -28,10 +29,16 @@ export function CollectionPageClient({
   products,
   collectionData,
   subCollections,
+  initialCursor,
+  initialHasNextPage,
 }: CollectionPageClientProps) {
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [allProducts, setAllProducts] = useState<ShopifyProduct[]>(products);
+  const [nextCursor, setNextCursor] = useState<string | null>(initialCursor || null);
+  const [hasMoreProducts, setHasMoreProducts] = useState(initialHasNextPage || false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { filters, setSort, clearAll } = useFilterStore();
   const searchParams = useSearchParams();
 
@@ -40,27 +47,51 @@ export function CollectionPageClient({
     setIsLoading(false);
   }, []);
 
+  // Fetch subcollection products when categories filter changes
+  useEffect(() => {
+    if (filters.categories.length === 0) {
+      // No subcollection selected, use only primary products
+      setAllProducts(products);
+      return;
+    }
+
+    // User selected specific subcollections, fetch their products
+    const fetchSubcollections = async () => {
+      const newProducts = [...products];
+      for (const categoryHandle of filters.categories) {
+        const subcollectionProducts = await fetchSubcollectionProducts(
+          categoryHandle,
+        );
+        // Tag products with their subcollection handle
+        const taggedProducts = subcollectionProducts.map((p) => ({
+          ...p,
+          __subCollectionHandle: categoryHandle,
+        }));
+        newProducts.push(...taggedProducts);
+      }
+      setAllProducts(newProducts);
+    };
+
+    fetchSubcollections();
+  }, [filters.categories, products]);
+
   // Check if collection has filters enabled
   const hasFiltersEnabled = collectionData?.hasFilters !== false;
 
-  // Analyze and filter subcategories - only show those with products
+  // Always show all subcollections for filtering, regardless of product availability
   const filteredSubCollections = useMemo(() => {
     if (!subCollections || subCollections.length === 0) return [];
 
-    const analyzed = analyzeSubcategoriesWithProducts(products, subCollections);
-
-    return analyzed.map((sc) => ({
+    return subCollections.map((sc) => ({
       id: sc.id,
       title: sc.title,
       handle: sc.handle,
-      description:
-        subCollections.find((sub) => sub.handle === sc.handle)?.description ||
-        "",
+      description: sc.description || "",
     }));
-  }, [products, slug, subCollections]);
+  }, [subCollections]);
 
   const filterOptions = useMemo(() => {
-    const collectionProducts = filterProductsByType(products, slug);
+    const collectionProducts = filterProductsByType(allProducts, slug);
 
     if (!hasFiltersEnabled) {
       // Return empty filter options for collections without filters
@@ -74,7 +105,7 @@ export function CollectionPageClient({
       };
     }
 
-    const baseFilters = extractFilterOptions(products, slug);
+    const baseFilters = extractFilterOptions(allProducts, slug);
 
     // Add dynamic product options (Color, Purity, Metal, etc.)
     const productOptions = extractProductOptions(collectionProducts);
@@ -87,7 +118,7 @@ export function CollectionPageClient({
       productOptions,
       collections,
     } as any;
-  }, [products, slug, hasFiltersEnabled]);
+  }, [allProducts, slug, hasFiltersEnabled]);
 
   // Reset display count when filters or search changes
   useEffect(() => {
@@ -99,7 +130,7 @@ export function CollectionPageClient({
     const productMap = new Map<string, ShopifyProduct>();
     const handlesByProductId = new Map<string, Set<string>>();
 
-    for (const product of products) {
+    for (const product of allProducts) {
       const existing = productMap.get(product.id);
       const handles = handlesByProductId.get(product.id) || new Set<string>();
 
@@ -119,13 +150,11 @@ export function CollectionPageClient({
     }
 
     const uniqueProducts = Array.from(productMap.values());
-    // Filter by sub-collection first if selected
     let filtered: ShopifyProduct[] = [];
 
     if (filters.categories.length > 0) {
-      // User selected specific sub-categories - show only those
+      // User selected specific subcollections - show only products from those subcollections
       filtered = uniqueProducts.filter((p) => {
-        // Check if product matches ANY of its subcollection handles
         const productHandles =
           handlesByProductId.get(p.id) ||
           new Set(p.__subCollectionHandle ? [p.__subCollectionHandle] : []);
@@ -134,9 +163,8 @@ export function CollectionPageClient({
         );
       });
     } else {
-      // If no category is selected, show all products of the correct type
-      // This includes both primary collection products and subcollection products
-      filtered = filterProductsByType([...uniqueProducts], slug);
+      // No subcollection selected - show only primary collection products
+      filtered = uniqueProducts.filter((p) => !p.__subCollectionHandle);
     }
 
     // Filter by search query (if any)
@@ -358,7 +386,7 @@ export function CollectionPageClient({
     }
 
     return filtered;
-  }, [filters, products, searchQuery, filteredSubCollections]);
+  }, [filters, allProducts, searchQuery, filteredSubCollections]);
 
   // Sort products based on selected sort option
   const sortedProducts = useMemo(() => {
@@ -427,11 +455,30 @@ export function CollectionPageClient({
 
   // Display products with infinite scroll
   const displayedProducts = sortedProducts.slice(0, displayCount);
-  const hasMore = displayCount < sortedProducts.length;
+  const hasMore = displayCount < sortedProducts.length || hasMoreProducts;
 
-  const handleLoadMore = useCallback(() => {
-    setDisplayCount((prev) => prev + ITEMS_PER_PAGE);
-  }, []);
+  const handleLoadMore = useCallback(async () => {
+    // If we're displaying all loaded products but there are more in Shopify, fetch them
+    if (displayCount >= sortedProducts.length && hasMoreProducts && nextCursor) {
+      setIsLoadingMore(true);
+      const result = await fetchMoreCollectionProducts(slug, nextCursor);
+
+      if (result.products.length > 0) {
+        // Add new products to the list
+        const newProducts = result.products.map((p) => ({
+          ...p,
+          // Don't tag as subcollection since they're primary products
+        }));
+        setAllProducts((prev) => [...prev, ...newProducts]);
+        setNextCursor(result.endCursor);
+        setHasMoreProducts(result.hasNextPage);
+      }
+      setIsLoadingMore(false);
+    } else {
+      // Just increase the display count
+      setDisplayCount((prev) => prev + ITEMS_PER_PAGE);
+    }
+  }, [displayCount, sortedProducts.length, hasMoreProducts, nextCursor, slug]);
 
   return (
     <div className="min-h-screen bg-evol-light-grey">
@@ -483,7 +530,11 @@ export function CollectionPageClient({
               <ShopifyProductGrid products={displayedProducts} />
 
               {/* Infinite Scroll Trigger */}
-              <InfiniteScroll hasMore={hasMore} onLoadMore={handleLoadMore} />
+              <InfiniteScroll
+                hasMore={hasMore}
+                isLoading={isLoadingMore}
+                onLoadMore={handleLoadMore}
+              />
             </>
           )}
         </div>
