@@ -17,8 +17,8 @@ export async function getRelatedProducts(
     let relatedProducts: ShopifyProduct[] = [];
 
     for (const collection of collections) {
-      const collectionProducts = await getCollectionProducts(collection.handle);
-      const sameTypeProducts = collectionProducts.filter(
+      const result = await getCollectionProducts(collection.handle);
+      const sameTypeProducts = result.products.filter(
         (p) =>
           p.id !== shopifyProduct.id &&
           p.productType?.toLowerCase() === productType,
@@ -29,10 +29,10 @@ export async function getRelatedProducts(
     }
 
     if (relatedProducts.length < limit && collections.length > 0) {
-      const firstCollectionProducts = await getCollectionProducts(
+      const firstCollectionResult = await getCollectionProducts(
         collections[0].handle,
       );
-      const otherProducts = firstCollectionProducts.filter(
+      const otherProducts = firstCollectionResult.products.filter(
         (p) =>
           p.id !== shopifyProduct.id &&
           !relatedProducts.find((rp) => rp.id === p.id),
