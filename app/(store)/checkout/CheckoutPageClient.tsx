@@ -137,7 +137,7 @@ function AddressForm({
           required
         />
         {errors.fullName && (
-          <p className="text-xs text-red-500 font-medium">{errors.fullName}</p>
+          <p className="text-sm text-red-500 font-medium">{errors.fullName}</p>
         )}
       </div>
 
@@ -161,7 +161,7 @@ function AddressForm({
           required
         />
         {errors.phone && (
-          <p className="text-xs text-red-500 font-medium">{errors.phone}</p>
+          <p className="text-sm text-red-500 font-medium">{errors.phone}</p>
         )}
       </div>
 
@@ -185,7 +185,7 @@ function AddressForm({
           required
         />
         {errors.addressLine1 && (
-          <p className="text-xs text-red-500 font-medium">
+          <p className="text-sm text-red-500 font-medium">
             {errors.addressLine1}
           </p>
         )}
@@ -227,7 +227,7 @@ function AddressForm({
             required
           />
           {errors.city && (
-            <p className="text-xs text-red-500 font-medium">{errors.city}</p>
+            <p className="text-sm text-red-500 font-medium">{errors.city}</p>
           )}
         </div>
 
@@ -249,7 +249,7 @@ function AddressForm({
             required
           />
           {errors.state && (
-            <p className="text-xs text-red-500 font-medium">{errors.state}</p>
+            <p className="text-sm text-red-500 font-medium">{errors.state}</p>
           )}
         </div>
 
@@ -274,7 +274,7 @@ function AddressForm({
             required
           />
           {errors.pinCode && (
-            <p className="text-xs text-red-500 font-medium">{errors.pinCode}</p>
+            <p className="text-sm text-red-500 font-medium">{errors.pinCode}</p>
           )}
         </div>
       </div>

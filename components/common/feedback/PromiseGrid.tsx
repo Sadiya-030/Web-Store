@@ -55,7 +55,7 @@ export function PromiseGrid({
             className="flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg transition-all hover:bg-red-50"
           >
             <Icon className="text-evolRed shrink-0 w-5 h-5 sm:w-6 sm:h-6" />
-            <span className="text-center font-sans font-medium text-gray-800 leading-tight text-xs sm:text-sm">
+            <span className="text-center font-sans font-medium text-gray-800 leading-tight text-sm">
               {item.label}
             </span>
           </div>

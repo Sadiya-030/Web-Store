@@ -37,10 +37,14 @@ export function RingSizeGuide({ open, onOpenChange }: RingSizeGuideProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="
-          w-[95vw]!
-          max-w-[80vw]!
-          h-[90vh]
-          max-h-[90vh]
+          w-full
+          sm:w-[95vw]
+          sm:max-w-2xl
+          md:max-w-4xl
+          h-screen
+          sm:h-[90vh]
+          max-h-screen
+          sm:max-h-[90vh]
           overflow-hidden
           flex
           flex-col
@@ -66,7 +70,7 @@ export function RingSizeGuide({ open, onOpenChange }: RingSizeGuideProps) {
               How To Measure Your Ring Size
             </h3>
 
-            <ol className="font-body text-sm md:text-base text-gray-700 space-y-3 list-decimal list-inside leading-relaxed">
+            <ol className="font-sans text-sm md:text-base text-gray-700 space-y-3 list-decimal list-inside leading-relaxed">
               <li>Use A Ring That Fits You Well</li>
               <li>Place It On A Ruler Or Use A Ring Sizer</li>
               <li>Measure The Inner Diameter In Millimeters</li>
@@ -117,7 +121,7 @@ export function RingSizeGuide({ open, onOpenChange }: RingSizeGuideProps) {
               Complimentary Resizing
             </h3>
 
-            <p className="font-body text-sm md:text-base text-gray-600 leading-relaxed">
+            <p className="font-sans text-sm md:text-base text-gray-600 leading-relaxed">
               Ring Resizing Is Complimentary Within 30 Days Of Purchase. After
               30 Days, Resizing Costs Will Apply.
               <br className="hidden md:block" />

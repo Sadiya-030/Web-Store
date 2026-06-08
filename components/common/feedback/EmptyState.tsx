@@ -70,7 +70,7 @@ export function EmptyState({
       <h2 className="font-serif text-2xl md:text-3xl text-gray-900 mb-2 md:mb-3">
         {title}
       </h2>
-      <p className="font-body text-sm md:text-base text-evol-dark-grey mb-6 md:mb-8">
+      <p className="font-sans text-sm md:text-base text-evol-dark-grey mb-6 md:mb-8">
         {description}
       </p>
       {actionLabel && onAction && (

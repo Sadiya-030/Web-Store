@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface CertificationBadgeProps {
   title: string;
@@ -38,15 +39,19 @@ export function CertificationsBadges() {
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2 sm:gap-3">
         {certifications.map((cert, idx) => (
-          <motion.button
+          <motion.div
             key={cert.title}
-            onClick={() => setSelectedCert(selectedCert === idx ? null : idx)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border-2 border-evolRed text-evolRed font-sans font-semibold text-sm transition-all hover:bg-evolRed hover:text-white"
           >
-            {cert.title}
-          </motion.button>
+            <Button
+              onClick={() => setSelectedCert(selectedCert === idx ? null : idx)}
+              variant={selectedCert === idx ? "default" : "outline"}
+              size="sm"
+            >
+              {cert.title}
+            </Button>
+          </motion.div>
         ))}
       </div>
 
@@ -64,12 +69,14 @@ export function CertificationsBadges() {
               <h4 className="font-serif font-bold text-gray-900 text-base sm:text-lg">
                 {certifications[selectedCert].title}
               </h4>
-              <button
+              <Button
                 onClick={() => setSelectedCert(null)}
-                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                variant="ghost"
+                size="sm"
+                className="flex-shrink-0"
               >
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
             <p className="font-sans text-sm text-gray-700 leading-relaxed">
               {certifications[selectedCert].description}

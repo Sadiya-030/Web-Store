@@ -66,7 +66,7 @@ export function CertificationsSection({
               <AccordionTrigger className="font-sans text-lg text-gray-900 font-medium hover:text-evolRed transition-colors py-3">
                 {cert.label}
               </AccordionTrigger>
-              <AccordionContent className="font-body text-base text-gray-700 leading-relaxed pt-2 pb-3">
+              <AccordionContent className="font-sans text-base text-gray-700 leading-relaxed pt-2 pb-3">
                 {cert.value}
               </AccordionContent>
             </AccordionItem>

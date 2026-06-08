@@ -10,7 +10,7 @@ export function ExpertConsultation() {
         <h2 className="font-serif text-2xl md:text-3xl text-gray-900 mb-4">
           Need A Closer Look? Talk To Our Experts
         </h2>
-        <p className="font-body text-gray-600 mb-8">
+        <p className="font-sans text-gray-600 mb-8">
           Our Jewelry Experts Are Ready To Help You Find The Perfect Piece.
           Schedule A Consultation Or Give Us A Call.
         </p>

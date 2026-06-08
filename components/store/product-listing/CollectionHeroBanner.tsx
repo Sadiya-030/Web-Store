@@ -13,7 +13,7 @@ export function CollectionHeroBanner({
 }: CollectionHeroBannerProps) {
   return (
     <div className="relative w-full overflow-hidden">
-      <div className="relative h-75 md:h-120 w-full">
+      <div className="relative h-64 sm:h-80 md:h-96 lg:h-125 xl:h-150 w-full">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -28,7 +28,7 @@ export function CollectionHeroBanner({
         {/* Content */}
         <div className="relative h-full flex flex-col justify-center items-center text-center px-6 md:px-8">
           {/* Breadcrumb */}
-          <div className="mb-6 md:mb-8 text-sm md:text-sm tracking-wide text-white text-opacity-50 font-sans">
+          <div className="mb-6 md:mb-8 text-sm tracking-wide text-white text-opacity-50 font-sans">
             {breadcrumb}
           </div>
 
@@ -38,7 +38,7 @@ export function CollectionHeroBanner({
           </h1>
 
           {/* Descriptor */}
-          <p className="font-body text-sm md:text-base text-white text-opacity-60 max-w-xl">
+          <p className="font-sans text-sm md:text-base text-white text-opacity-60 max-w-xl">
             {descriptor}
           </p>
         </div>

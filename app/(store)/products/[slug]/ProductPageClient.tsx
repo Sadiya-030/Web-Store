@@ -22,7 +22,6 @@ interface ProductPageClientProps {
   shopifyProduct: ShopifyProduct;
 }
 
-// Extract color code from image URL (e.g., "SRNG332379-YG-PV.jpg" → "YG")
 const extractColorCodeFromUrl = (url: string): string | null => {
   // Look for patterns like -YG-, -WG-, -RG- in the URL
   const colorMatch = url.match(/-(YG|WG|RG)(?:[-.]|_)/i);
@@ -87,7 +86,6 @@ export function ProductPageClient({ shopifyProduct }: ProductPageClientProps) {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [showCustomizationRequest, setShowCustomizationRequest] =
     useState(false);
-
 
   const deliveryTimelineString = useMemo(() => {
     if (!shopifyProduct.metafields) {
@@ -426,7 +424,7 @@ export function ProductPageClient({ shopifyProduct }: ProductPageClientProps) {
                   <p className="font-sans font-medium text-2xl sm:text-3xl md:text-4xl text-gray-900">
                     ₹{totalPrice.toLocaleString("en-IN")}
                   </p>
-                  <p className="font-body text-sm text-gray-600 mt-1">
+                  <p className="font-sans text-sm text-gray-600 mt-1">
                     Inclusive Of All Taxes · Free Insured Shipping
                   </p>
                 </motion.div>

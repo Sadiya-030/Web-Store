@@ -104,8 +104,10 @@ export function CartItemList({
             <h3 className="font-serif font-semibold text-lg text-gray-900 line-clamp-2">
               {getName(item)}
             </h3>
-            <div className="flex items-center gap-2 text-md text-gray-600 font-body">
-              <span className="text-gray-700 font-medium">{getColor(item)}</span>
+            <div className="flex items-center gap-2 text-md text-gray-600 font-sans">
+              <span className="text-gray-700 font-medium">
+                {getColor(item)}
+              </span>
 
               {getConfiguration(item) && (
                 <>
@@ -154,7 +156,7 @@ export function CartItemList({
                   onClick={() =>
                     onRemove(item.productId, { color: getColor(item) })
                   }
-                  className="ml-auto text-md text-evolRed"
+                  className="ml-auto text-md text-evolRed font-sans"
                 >
                   Remove
                 </Button>

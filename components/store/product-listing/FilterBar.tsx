@@ -204,7 +204,7 @@ export function FilterBar({
                   <DropdownMenuContent
                     align="start"
                     sideOffset={8}
-                    className="w-80 bg-white border border-evol-grey rounded-md! shadow-lg p-3 data-[state=open]:animate-none data-[state=closed]:animate-none"
+                    className="w-72 sm:w-80 bg-white border border-evol-grey rounded-md! shadow-lg p-3 data-[state=open]:animate-none data-[state=closed]:animate-none"
                     suppressHydrationWarning
                   >
                     {pill.key !== "shape" && (
@@ -215,7 +215,9 @@ export function FilterBar({
                         <DropdownMenuSeparator className="my-2" />
                       </>
                     )}
-                    <div className={`grid gap-2 ${pill.key === "shape" ? "grid-cols-4" : "grid-cols-5"}`}>
+                    <div
+                      className={`grid gap-2 ${pill.key === "shape" ? "grid-cols-4" : "grid-cols-5"}`}
+                    >
                       {pill.options.map((option) => (
                         <button
                           key={option.value}
@@ -305,7 +307,7 @@ export function FilterBar({
                           hover:bg-gray-50
                         "
                       >
-                        <span className="font-body text-sm md:text-base">
+                        <span className="font-sans text-sm md:text-base">
                           {option.label}
                         </span>
                       </DropdownMenuCheckboxItem>
@@ -320,14 +322,14 @@ export function FilterBar({
           {hasActiveFilters() && (
             <Button
               onClick={() => clearAll()}
-              className="text-sm md:text-sm text-evolRed font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
+              className="text-sm text-evolRed font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
             >
               Clear All
             </Button>
           )}
 
           {/* Results Count */}
-          <div className="text-sm md:text-sm text-evol-dark-grey font-body whitespace-nowrap">
+          <div className="text-sm text-evol-dark-grey font-sans whitespace-nowrap">
             {resultCount} Pieces
           </div>
         </div>

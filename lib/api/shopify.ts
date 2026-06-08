@@ -834,9 +834,6 @@ export async function getCollectionFirstProductImage(
     }
 
     const product = response.data.collectionByHandle.products.edges[0].node;
-    logger.warn(
-      `[getCollectionFirstProductImage] Collection: ${shopifyHandle}, Product: ${product.title} (${product.id}), Type: ${product.productType}, Image: ${product.featuredImage?.url}`,
-    );
 
     return product.featuredImage?.url || "";
   } catch (error) {

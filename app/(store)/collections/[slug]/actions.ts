@@ -10,7 +10,10 @@ export async function fetchSubcollectionProducts(
     const result = await getCollectionProducts(handle);
     return result.products;
   } catch (error) {
-    console.error(`Failed to fetch subcollection products for "${handle}":`, error);
+    console.error(
+      `Failed to Fetch Subcollection Products for "${handle}":`,
+      error,
+    );
     return [];
   }
 }
@@ -27,7 +30,10 @@ export async function fetchMoreCollectionProducts(
     const result = await getCollectionProducts(collectionHandle, cursor);
     return result;
   } catch (error) {
-    console.error(`Failed to fetch more products for "${collectionHandle}":`, error);
+    console.error(
+      `Failed to Fetch More Products for "${collectionHandle}":`,
+      error,
+    );
     return { products: [], hasNextPage: false, endCursor: null };
   }
 }

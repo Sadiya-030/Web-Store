@@ -74,9 +74,11 @@ export function SortBar({
     options.find((opt) => opt.value === currentSort)?.label || "Sort By";
 
   return (
-    <div className={`flex items-center justify-between mb-6 md:mb-8 ${className}`}>
+    <div
+      className={`flex items-center justify-between mb-6 md:mb-8 ${className}`}
+    >
       {showResultCount && resultCount !== undefined && (
-        <p className="font-body text-sm md:text-base text-evol-dark-grey">
+        <p className="font-sans text-sm md:text-base text-evol-dark-grey">
           {resultCount} {resultLabel}
         </p>
       )}
@@ -108,7 +110,7 @@ export function SortBar({
                   : "text-gray-700 hover:bg-gray-50"
               }`}
             >
-              <span className="font-body text-sm md:text-base">
+              <span className="font-sans text-sm md:text-base">
                 {option.label}
               </span>
             </DropdownMenuItem>

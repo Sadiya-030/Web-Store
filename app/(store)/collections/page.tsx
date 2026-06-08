@@ -84,13 +84,13 @@ export default async function CollectionsPage() {
         />
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-evol-light-grey opacity-50" />
         <div className="relative h-full flex flex-col justify-center items-center text-center px-6">
-          <p className="font-sans text-sm md:text-sm tracking-wide text-white text-opacity-50 mb-4 md:mb-6">
+          <p className="font-sans text-sm tracking-wide text-white text-opacity-50 mb-4 md:mb-6">
             Explore Our Collections
           </p>
           <h1 className="font-serif text-4xl md:text-6xl text-white leading-tight max-w-2xl mb-3">
             All Collections
           </h1>
-          <p className="font-body text-sm md:text-base text-white text-opacity-70 max-w-xl">
+          <p className="font-sans text-sm md:text-base text-white text-opacity-70 max-w-xl">
             Curated Selections Of Lab-Grown Diamond Jewellery For Every Moment
           </p>
         </div>
@@ -128,7 +128,7 @@ export default async function CollectionsPage() {
                     <h2 className="font-serif text-2xl md:text-3xl text-gray-900 group-hover:text-evolRed transition-colors">
                       {collection.title}
                     </h2>
-                    <p className="font-body text-sm md:text-base text-gray-600 line-clamp-2 leading-relaxed">
+                    <p className="font-sans text-sm md:text-base text-gray-600 line-clamp-2 leading-relaxed">
                       {collection.description}
                     </p>
 
@@ -153,7 +153,7 @@ export default async function CollectionsPage() {
           <h2 className="font-serif text-3xl md:text-4xl text-gray-900">
             Browse All Products
           </h2>
-          <p className="font-body text-base md:text-lg text-gray-600">
+          <p className="font-sans text-base md:text-lg text-gray-600">
             Explore Our Complete Collection Of Lab-Grown Diamond Jewellery.
             <br />
             Every Piece Is Crafted With Precision And Care.

@@ -81,7 +81,7 @@ export function SearchBar({
         value={query}
         onChange={handleChange}
         placeholder={placeholder}
-        className={`w-full pl-10 pr-10 py-2.5 border ${borderColor} rounded-lg text-base font-body focus:outline-none focus:${focusBorderColor} focus:ring-1 focus:${focusRingColor} transition-colors`}
+        className={`w-full pl-10 pr-10 py-2.5 border ${borderColor} rounded-lg text-base font-sans focus:outline-none focus:${focusBorderColor} focus:ring-1 focus:${focusRingColor} transition-colors`}
       />
       {query && (
         <Button
@@ -100,7 +100,9 @@ export function SearchBar({
   }
 
   return (
-    <div className={`w-full bg-white border-b ${borderColor} px-4 md:px-6 py-4 ${containerClassName}`}>
+    <div
+      className={`w-full bg-white border-b ${borderColor} px-4 md:px-6 py-4 ${containerClassName}`}
+    >
       <div className={`max-w-7xl mx-auto ${innerClassName}`}>
         {inputElement}
       </div>
